@@ -21,6 +21,14 @@ def transpile(code):
             elif character == "*" and index < len(code) - 1 and code[index + 1] == "*":
                 pause = True
                 result += "^"
+            elif character == "?":
+                result += " if "
+            elif character == ":":
+                result += " else "
+            elif character == "≤":
+                result += "<="
+            elif character == "≥":
+                result += ">="
             else:
                 result += character
     return result
