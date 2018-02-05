@@ -23,3 +23,10 @@ def Cot(deg: float) -> float:
 
 def SchwarzschildRadius(mass: float) -> float:
     return (2 * mass * G) / (c ** 2)
+
+
+def KineticEnergy(mass: float, velocity: float) -> float:
+    return (mass * (velocity ** 2)) / 2
+
+def Print(*objects, Sep = " ", End = "\n"):
+    print(*objects, sep = Sep, end = End)
