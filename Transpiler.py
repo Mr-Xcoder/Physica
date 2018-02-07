@@ -26,7 +26,7 @@ def transpile(code):
             elif character == "≥":
                 result += ">="
             elif character == "√":
-                result += "Sqrt"
+                result += "Root"
             elif character == "µ":
                 result += "FrictionCoefficient"
             elif character == "∂":
