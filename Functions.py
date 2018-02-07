@@ -22,6 +22,14 @@ def Cot(deg: float) -> float:
     return 1 / math.tan(DegToRad(deg))
 
 
+def Sec(deg: float) -> float:
+    return 1 / Cos(deg)
+
+
+def Csc(deg: float) -> float:
+    return 1 / Sin(deg)
+
+
 def SchwarzschildRadius(mass: float) -> float:
     return (2 * mass * G) / (c ** 2)
 
@@ -96,6 +104,13 @@ def FullPrimeFac(integer: int) -> list:
         return list(map(list,__import__('sympy').ntheory.factor_.factorint(int(integer)).items()))
     else:
         raise TypeError("Unable to factorize the given argument")
+
+
+def SquareQ(number: float) -> bool:
+    if number == int(number):
+        return Sqrt(number) == int(Sqrt(number))
+    else:
+        return False
 
 
 def Print(*objects, Sep : str = " ", End : str = "\n"):
