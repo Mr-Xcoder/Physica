@@ -1,5 +1,6 @@
 from Constants import *
-import math, collections
+import math
+import collections
 
 
 DegToRad = math.radians
@@ -123,6 +124,16 @@ def Map(*objects) -> list:
 
 def Slice(iterable: collections.Sized, start: int = 0, end: int = 0, step: int = 1) -> collections.Sized:
     return iterable[start : end or len(iterable) : step]
+
+
+def Range(lowerBound: int, upperBound: int, step: int = 1):
+    if isinstance(lowerBound, int) and isinstance(upperBound, int) and isinstance(step, int):
+        if lowerBound <= upperBound:
+            return list(range(lowerBound, upperBound + 1, step))
+        else:
+            return list(range(upperBound, lowerBound + 1)[::-1][::step])
+    else:
+        raise TypeError("Range arguments must all be integers")
 
 
 def Print(*objects, Sep : str = " ", End : str = "\n"):
