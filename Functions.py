@@ -1,6 +1,5 @@
 from Constants import *
-import math
-import collections
+import math, collections
 
 
 DegToRad = math.radians
