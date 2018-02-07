@@ -1,5 +1,6 @@
 from Constants import *
 import math
+import collections
 
 
 DegToRad = math.radians
@@ -119,6 +120,10 @@ def Root(base: float, root: float = 2) -> float:
 
 def Map(*objects) -> list:
     return list(map(*objects))
+
+
+def Slice(iterable: collections.Iterable, start: int = 0, end: int = 0, step: int = 1) -> collections.Iterable:
+    return iterable[start : end or len(iterable) : step]
 
 
 def Print(*objects, Sep : str = " ", End : str = "\n"):
