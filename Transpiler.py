@@ -29,6 +29,14 @@ def transpile(code):
                 result += "<="
             elif character == "≥":
                 result += ">="
+            elif character == "√":
+                result += "Sqrt"
+            elif character == "µ":
+                result += "FrictionCoefficient"
+            elif character == "∂":
+                result += "Differentiate"
+            elif character == "∫":
+                result += "Integrate"
             else:
                 result += character
     return result
