@@ -35,6 +35,14 @@ def transpile(code):
                 result += "Integrate"
             elif character == "⟶":
                 result += "lambda "
+            elif character == "~":
+                result += "::"
+            elif character == "{":
+                result += "["
+            elif character == "}":
+                result += "]"
+            elif character == "…":
+                result += "Range"
             else:
                 result += character
     result = result.replace("Until", "while not ")
