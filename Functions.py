@@ -66,5 +66,37 @@ def Sqrt(number: float) -> float:
     return number ** 0.5
 
 
+def PrimeQ(integer: int) -> bool:
+    if integer == int(integer):
+        return __import__('sympy').primetest.isprime(int(integer))
+    else:
+        raise TypeError("Unable to run a primality test on the given argument")
+
+
+def CompositeQ(integer: int) -> bool:
+    return not PrimeQ(integer)
+
+
+def PrimePi(number: float) -> int:
+    return  __import__('sympy').ntheory.generate.primepi(number)
+
+
+def PrimeFac(integer: int) -> list:
+    if integer == int(integer):
+        result = []
+        for factor, exponent in __import__('sympy').ntheory.factor_.factorint(int(integer)).items():
+            result.extend([factor] * exponent)
+        return result
+    else:
+        raise TypeError("Unable to factorize the given argument")
+
+
+def FullPrimeFac(integer: int) -> list:
+    if integer == int(integer):
+        return list(map(list,__import__('sympy').ntheory.factor_.factorint(int(integer)).items()))
+    else:
+        raise TypeError("Unable to factorize the given argument")
+
+
 def Print(*objects, Sep : str = " ", End : str = "\n"):
     print(*objects, sep = Sep, end = End)
