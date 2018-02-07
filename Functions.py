@@ -113,6 +113,10 @@ def SquareQ(number: float) -> bool:
         return False
 
 
+def Root(base: float, root: float = 2) -> float:
+    return base ** (1 / root)
+
+
 def Map(*objects) -> list:
     return list(map(*objects))
 
