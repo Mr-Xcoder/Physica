@@ -1,6 +1,7 @@
 from Constants import *
 import math
 
+
 DegToRad = math.radians
 RadToDeg = math.degrees
 
@@ -47,6 +48,22 @@ def NormalComponent(force: float, angle: float) -> float:
 
 def FrictionForce(frictionCoefficient: float, mass: float, angle : float = 0, gravitationAcceleration: float = g) -> float:
     return frictionCoefficient * mass * Cos(angle) * gravitationAcceleration
+
+
+def FrictionCoefficient(frictionForce: float, mass: float, angle: float = 0, gravitationAcceleration: float = g) -> float:
+    return frictionForce / (mass * gravitationAcceleration * Cos(angle))
+
+
+def Integrate(*objects) -> str:
+    return str(__import__('sympy').integrate(*objects))
+
+
+def Differentiate(*objects) -> str:
+    return str(__import__('sympy').diff(*objects))
+
+
+def Sqrt(number: float) -> float:
+    return number ** 0.5
 
 
 def Print(*objects, Sep : str = " ", End : str = "\n"):
