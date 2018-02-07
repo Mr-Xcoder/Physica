@@ -37,4 +37,5 @@ def transpile(code):
                 result += "lambda "
             else:
                 result += character
+    result = result.replace("Until", "while not ")
     return result
