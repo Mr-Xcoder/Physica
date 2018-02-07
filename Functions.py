@@ -1,6 +1,5 @@
 from Constants import *
-import math
-import collections
+import math, collections, sympy
 
 
 DegToRad = math.radians
@@ -64,11 +63,11 @@ def FrictionCoefficient(frictionForce: float, mass: float, angle: float = 0, gra
 
 
 def Integrate(*objects) -> str:
-    return str(__import__("sympy").integrate(*objects))
+    return str(sympy.integrate(*objects))
 
 
 def Differentiate(*objects) -> str:
-    return str(__import__("sympy").diff(*objects))
+    return str(sympy.diff(*objects))
 
 
 def Sqrt(number: float) -> float:
@@ -77,7 +76,7 @@ def Sqrt(number: float) -> float:
 
 def PrimeQ(integer: int) -> bool:
     if integer == int(integer):
-        return __import__("sympy").primetest.isprime(int(integer))
+        return sympy.primetest.isprime(int(integer))
     else:
         raise TypeError("Unable to run a primality test on the given argument")
 
@@ -87,13 +86,13 @@ def CompositeQ(integer: int) -> bool:
 
 
 def PrimePi(number: float) -> int:
-    return  __import__("sympy").ntheory.generate.primepi(number)
+    return sympy.ntheory.generate.primepi(number)
 
 
 def PrimeFac(integer: int) -> list:
     if integer == int(integer):
         result = []
-        for factor, exponent in __import__("sympy").ntheory.factor_.factorint(int(integer)).items():
+        for factor, exponent in sympy.ntheory.factor_.factorint(int(integer)).items():
             result.extend([factor] * exponent)
         return result
     else:
@@ -102,7 +101,7 @@ def PrimeFac(integer: int) -> list:
 
 def FullPrimeFac(integer: int) -> list:
     if integer == int(integer):
-        return list(map(list,__import__("sympy").ntheory.factor_.factorint(int(integer)).items()))
+        return list(map(list, sympy.ntheory.factor_.factorint(int(integer)).items()))
     else:
         raise TypeError("Unable to factorize the given argument")
 
@@ -122,7 +121,7 @@ def Map(*objects) -> list:
     return list(map(*objects))
 
 
-def Slice(iterable: collections.Sized, start: int = 0, end: int = 0, step: int = 1) -> collections.Sized:
+def Slice(iterable: collections.Sequence, start: int = 0, end: int = 0, step: int = 1) -> collections.Sequence:
     return iterable[start : end or len(iterable) : step]
 
 
