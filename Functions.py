@@ -122,7 +122,7 @@ def Map(*objects) -> list:
     return list(map(*objects))
 
 
-def Slice(iterable: collections.Iterable, start: int = 0, end: int = 0, step: int = 1) -> collections.Iterable:
+def Slice(iterable: collections.Sized, start: int = 0, end: int = 0, step: int = 1) -> collections.Sized:
     return iterable[start : end or len(iterable) : step]
 
 
