@@ -1,8 +1,17 @@
 class Transpiler:
-    @staticmethod
-    def transpile(code: str) -> str:
+
+    restrict_unicode = False
+
+    def __init__(self, *, restrict_unicode: bool = False):
+        self.restrict_unicode = restrict_unicode
+
+    def transpile(self, code: str) -> str:
         result = ""
         pause = 0
+
+        if self.restrict_unicode and any(ord(character) > 127 for character in code):
+            raise UnicodeError("Use of characters outside the ASCII range 0 – 127 is forbidden.")
+
         for index, character in enumerate(code):
             if pause:
                 pause -= 1
@@ -35,7 +44,8 @@ class Transpiler:
                     result += "Differentiate"
                 elif character == "∫":
                     result += "Integrate"
-                elif character == "⟶":
+                elif code[index:index + 2] == "=>":
+                    pause = 1
                     result += "lambda "
                 elif character == "~":
                     result += "::"
