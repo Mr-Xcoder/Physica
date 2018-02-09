@@ -1,6 +1,9 @@
 from Constants import *
-import math, collections, sympy
-
+from Transpiler import *
+import math
+import collections
+import sympy
+import itertools
 
 DegToRad = math.radians
 RadToDeg = math.degrees
@@ -38,12 +41,12 @@ def KineticEnergy(mass: float, velocity: float) -> float:
     return (mass * (velocity ** 2)) / 2
 
 
-def PotentialEnergy(mass: float, height: float, gravitationAcceleration: float = g) -> float:
-    return mass * height * gravitationAcceleration
+def PotentialEnergy(mass: float, height: float, gravitational_acceleration: float = g) -> float:
+    return mass * height * gravitational_acceleration
 
 
-def ElasticPotentialEnergy(springConstant: float, deformation: float) -> float:
-    return (springConstant * (deformation ** 2)) / 2
+def ElasticPotentialEnergy(spring_constant: float, deformation: float) -> float:
+    return (spring_constant * (deformation ** 2)) / 2
 
 
 def TangentialComponent(force: float, angle: float) -> float:
@@ -51,15 +54,15 @@ def TangentialComponent(force: float, angle: float) -> float:
 
 
 def NormalComponent(force: float, angle: float) -> float:
-        return force * Cos(angle)
+    return force * Cos(angle)
 
 
-def FrictionForce(frictionCoefficient: float, mass: float, angle : float = 0, gravitationAcceleration: float = g) -> float:
-    return frictionCoefficient * mass * Cos(angle) * gravitationAcceleration
+def FrictionForce(friction_coefficient: float, mass: float, angle: float = 0, gravitational_acceleration: float = g) -> float:
+    return friction_coefficient * mass * Cos(angle) * gravitational_acceleration
 
 
-def FrictionCoefficient(frictionForce: float, mass: float, angle: float = 0, gravitationAcceleration: float = g) -> float:
-    return frictionForce / (mass * gravitationAcceleration * Cos(angle))
+def FrictionCoefficient(friction_force: float, mass: float, angle: float = 0, gravitational_acceleration: float = g) -> float:
+    return friction_force / (mass * gravitational_acceleration * Cos(angle))
 
 
 def Integrate(*objects) -> str:
@@ -121,19 +124,36 @@ def Map(*objects) -> list:
     return list(map(*objects))
 
 
+def Filter(*objects) -> list:
+    return list(filter(*objects))
+
+
+def Permutations(item: collections.Sequence) -> list:
+    perms = list(itertools.permutations(item))
+    if isinstance(item, str):
+        return list(map("".join, perms))
+    return list(map(list, perms))
+
+
 def Slice(iterable: collections.Sequence, start: int = 0, end: int = 0, step: int = 1) -> collections.Sequence:
-    return iterable[start : end or len(iterable) : step]
+    return iterable[start:end or len(iterable):step]
 
 
-def Range(lowerBound: int, upperBound: int, step: int = 1):
-    if isinstance(lowerBound, int) and isinstance(upperBound, int) and isinstance(step, int):
-        if lowerBound <= upperBound:
-            return list(range(lowerBound, upperBound + 1, step))
+def Range(lower_bound: int, upper_bound: int, step: int = 1) -> list:
+    if isinstance(lower_bound, int) and isinstance(upper_bound, int) and isinstance(step, int):
+        if lower_bound <= upper_bound:
+            return list(range(lower_bound, upper_bound + 1, step))
         else:
-            return list(range(upperBound, lowerBound + 1)[::-1][::step])
+            return list(range(upper_bound, lower_bound + 1)[::-1][::step])
     else:
         raise TypeError("Range arguments must all be integers")
 
 
-def Print(*objects, Sep : str = " ", End : str = "\n"):
-    print(*objects, sep = Sep, end = End)
+def Print(*objects, Sep: str = " ", End: str = "\n"):
+    result = []
+    for element in objects:
+        if isinstance(element, list):
+            result.append(Transpiler().format_list(element))
+        else:
+            result.append(element)
+    print(*result, sep=Sep, end=End)
