@@ -1,9 +1,9 @@
 def transpile(code):
     result = ""
-    pause = False
+    pause = 0
     for index, character in enumerate(code):
         if pause:
-            pause = False
+            pause -= 1
             continue
         if code[: index].count('"') % 2:
             result += character
@@ -18,8 +18,8 @@ def transpile(code):
                 result += ";"
             elif character == "^":
                 result += "**"
-            elif character == "*" and index < len(code) - 1 and code[index + 1] == "*":
-                pause = True
+            elif code[index:index+2] == "**":
+                pause = 1
                 result += "^"
             elif character == "≤":
                 result += "<="
@@ -43,7 +43,11 @@ def transpile(code):
                 result += "]"
             elif character == "…":
                 result += "Range"
+            elif code[index : index+5] == "Until":
+                pause = 4
+                result += "while not"
+            elif code[index : index+6] == "import":
+                raise ImportError("Python imports are specifically disallowed")
             else:
                 result += character
-    result = result.replace("Until", "while not ")
     return result
