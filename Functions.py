@@ -149,6 +149,10 @@ def Range(lower_bound: int, upper_bound: int, step: int = 1) -> list:
         raise TypeError("Range arguments must all be integers")
 
 
+def Input() -> object:
+    return eval(input())
+
+
 def Print(*objects, Sep: str = " ", End: str = "\n"):
     result = []
     for element in objects:
