@@ -153,6 +153,14 @@ def Input() -> object:
     return eval(input())
 
 
+def Str(item: object) -> str:
+    return str(item)
+
+
+def Element(item: collections.Sequence, index: int) -> object:
+    return item[index - 1]
+
+
 def Print(*objects, Sep: str = " ", End: str = "\n"):
     result = []
     for element in objects:
