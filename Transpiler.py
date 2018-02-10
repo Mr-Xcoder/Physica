@@ -36,8 +36,13 @@ class Transpiler:
                     result += "<="
                 elif character == "≥":
                     result += ">="
+                elif code[index:index+2] == "If":
+                    pause = 1
+                    result += "if"
                 elif character == "√":
                     result += "Root"
+                elif character == "@":
+                    result += "()"
                 elif character == "µ":
                     result += "FrictionCoefficient"
                 elif character == "∂":
@@ -58,6 +63,16 @@ class Transpiler:
                 elif code[index: index + 5] == "Until":
                     pause = 4
                     result += "while not"
+                elif character == "≠":
+                    result += "!="
+                elif character == "!":
+                    result += " not "
+                elif code[index:index + 2] == "||":
+                    pause = 1
+                    result += " or "
+                elif code[index:index + 2] == "&&":
+                    pause = 1
+                    result += " and "
                 elif code[index: index + 6] == "import":
                     raise ImportError("Python imports are specifically disallowed")
                 else:
