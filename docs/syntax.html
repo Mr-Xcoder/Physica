@@ -31,20 +31,17 @@
          padding:0 20px;
          color: #bbbbbb;
         }
-        
         .header {
          background-color:#151515;
          color: #ffffff;
          padding: 10px;
          text-align: center;
         }
-        
         body {
          margin: 0 !important;
          background-color: #303030;
          font-family: Verdana;
         }
-        
         a:link, a:visited {
             text-decoration: none;
             color: #151515;
@@ -92,10 +89,13 @@
             <p>Unlike Python's <code>,</code> (comma), the standard separator for function arguments is <code>;</code> (semicolon). When it comes to multiple statements on the same line, it's the other way around: Instead of Python's semicolon (<code>;</code>), Physica uses a <i>single</i> comma (<code>,</code>)</p>
             <h3>Naming convensions</h3>
             <p>Variable names should preferrably start with a lowercase letter, and should only contain alphanumeric characters, combined with underscores.</p>
-            <p> Functions typically start with an uppercase letter. If a function's name contains two or more words, they all start with uppercase letters. The rest of the characters in a function name are usually lowercase letters, with the exceptions being input functions, such as <code>STDIN</code> and <code>ARGV</code>.</p>
+            <p> Functions typically start with a uppercase letters. If a function's name consists of two or more words, they all start with uppercase letters. The rest of the characters in a function name are usually lowercase letters, with the exceptions being input functions, such as <code>STDIN</code> and <code>ARGV</code>.</p>
+            <p>Functions that return a <i>truthy / falsy</i> value depending on whether their arguments satisfy certain conditions are called <b>boolean functions</b>. All built-in boolean functions have an uppercase <code>Q</code> appended to their names (e.g. <code>PrimeQ</code>).</p>
+            <h3>Lists</h3>
+            <code>{elem<sub>1</sub>; elem<sub>2</sub>; elem<sub>3</sub>; ...; elem<sub>n</sub>}</code>
+            <p>Lists in Physica are delimited using curly braces: <code>{</code> and <code>}</code>. Consistently with the separator convensions for function arguments, elements of lists are separated by semi-colons.</p>
         </div>
     </div>
-
 
 </body>
 
