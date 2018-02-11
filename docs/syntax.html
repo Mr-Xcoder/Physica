@@ -52,6 +52,11 @@
         a:hover, a:active{
             color: #555555;
         }
+        code {
+         font-size: 17px;
+         background-color: #666666;
+         color: #fff;
+        }
         
         @media only screen and (max-width:620px) {
          .menu{
@@ -81,6 +86,13 @@
         <div class="main">
             <h2>Syntax</h2>
             <p>Physica's syntax is <i>a mix</i> of Python and Mathematica, along with a couple of unique elements, which are described thoroughly on this page.</p>
+            <h3>String Literals</h3>
+            <p>In order to create a string literal in Physica, you should use the delimiter <code>'</code>. If you don't want to encounter transpilation issues, please avoid <code>"</code>. Escaping works as expected: prepend a backslash to that character (e.g. <code>'Her name is \'Sally\''</code> gives <i>Her name is 'Sally'</i>). Note that you don't have to worry about transpiling in strings. The engine behing Physica's transpiler doesn't make any changes to pieces of code surrounded by <code>'</code> characters.</p>
+            <h3>Separators</h3>
+            <p>Unlike Python's <code>,</code> (comma), the standard separator for function arguments is <code>;</code> (semicolon). When it comes to multiple statements on the same line, it's the other way around: Instead of Python's semicolon (<code>;</code>), Physica uses a <i>single</i> comma (<code>,</code>)</p>
+            <h3>Naming convensions</h3>
+            <p>Variable names should preferrably start with a lowercase letter, and should only contain alphanumeric characters, combined with underscores.</p>
+            <p> Functions typically start with an uppercase letter. If a function's name contains two or more words, they all start with uppercase letters. The rest of the characters in a function name are usually lowercase letters, with the exceptions being input functions, such as <code>STDIN</code> and <code>ARGV</code>.</p>
         </div>
     </div>
 
