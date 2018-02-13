@@ -23,6 +23,8 @@ class Transpiler:
                     result += "("
                 elif character == "]":
                     result += ")"
+                elif character == "$":
+                    result += "globals()"
                 elif character == ";":
                     result += ","
                 elif character == ",":
@@ -67,6 +69,9 @@ class Transpiler:
                     result += "!="
                 elif character == "!":
                     result += " not "
+                elif code[index:index + 3] == "For":
+                    pause = 2
+                    result += "for"
                 elif code[index:index + 2] == "||":
                     pause = 1
                     result += " or "
