@@ -25,6 +25,9 @@
          margin-right:5px;
          border-radius: 3px;
         }
+        .menuitem:hover{
+        	background-color: #ffffff;
+        }
         .main {
          float:left;
          width:70%;
@@ -49,9 +52,6 @@
          text-decoration: none;
          color: #151515;
         }
-        a:hover, a:active{
-         color: #555555;
-        }
         
         @media only screen and (max-width:620px) {
          .menu{
@@ -72,11 +72,11 @@
 
     <div style="overflow:auto">
         <div class="menu">
-            <div class="menuitem"><a href="./index.html">Home</a></div>
-            <div class="menuitem"><a href="./syntax.html">Syntax</a></div>
-            <div class="menuitem"><a href="./functions.html">Functions</a></div>
-            <div class="menuitem"><a href="./control-flow.html">Control Flow</a></div>
-            <div class="menuitem"><a href="./others.html">Others</a></div>
+            <a href="./index.html"><div class="menuitem">Home</div></a>
+            <a href="./syntax.html"><div class="menuitem">Syntax</div></a>
+            <a href="./functions.html"><div class="menuitem">Functions</div></a>
+            <a href="./control-flow.html"><div class="menuitem">Control Flow</div></a>
+            <a href="./others.html"><div class="menuitem">Others</div></a>
         </div>
 
         <div class="main">
