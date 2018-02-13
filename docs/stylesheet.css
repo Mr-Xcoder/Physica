@@ -1,6 +1,7 @@
 * {
  box-sizing: border-box;
 }
+
 .menu {
  background-color: #151515;
  float:left;
@@ -8,6 +9,7 @@
  text-align:center;
  border-radius: 0 0 5px 5px;
 }
+
 .menuitem {
  background-color: #bbbbbb;
  color: #151515;
@@ -18,9 +20,11 @@
  margin-right:5px;
  border-radius: 3px;
 }
+
 .menuitem:hover{
 	background-color: #ffffff;
 }
+
 .main {
  float:left;
  width:70%;
