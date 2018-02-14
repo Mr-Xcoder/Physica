@@ -4,6 +4,7 @@ import math
 import collections
 import sympy
 import itertools
+import sys
 
 DegToRad = math.radians
 RadToDeg = math.degrees
@@ -150,7 +151,19 @@ def Range(lower_bound: int, upper_bound: int, step: int = 1) -> list:
 
 
 def Input() -> object:
-    return eval(input())
+    inp = input()
+    try:
+        return eval(inp)
+    except NameError:
+        return inp
+
+
+def STDIN() -> list:
+    return sys.stdin.read().split("\n")
+
+
+def ARGV() -> list:
+    return sys.argv[1:]
 
 
 def Str(item: object) -> str:
