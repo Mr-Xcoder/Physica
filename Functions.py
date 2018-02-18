@@ -154,7 +154,11 @@ def Input() -> object:
     inp = input()
     try:
         return eval(inp)
-    except NameError:
+    except (NameError, SyntaxError):
+        try:
+            return Transpiler().unformat_list(inp)
+        except:
+            return inp
         return inp
 
 
