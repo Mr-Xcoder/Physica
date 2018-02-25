@@ -23,6 +23,10 @@ class Transpiler:
                     result += "("
                 elif character == "]":
                     result += ")"
+                elif character == "(":
+                    result += "{"
+                elif character == ")":
+                    result += "}"
                 elif character == "$":
                     result += " |apply| "
                 elif character == ";":
@@ -38,13 +42,13 @@ class Transpiler:
                     result += "<="
                 elif character == "≥":
                     result += ">="
-                elif code[index:index+2] == "If":
+                elif code[index:index + 2] == "If":
                     pause = 1
                     result += "if"
-                elif code[index:index+7] == "Else If":
+                elif code[index:index + 7] == "Else If":
                     pause = 6
                     result += "elif"
-                elif code[index:index+4] == "Else":
+                elif code[index:index + 4] == "Else":
                     pause = 3
                     result += "else"
                 elif character == "√":
@@ -80,15 +84,24 @@ class Transpiler:
                 elif code[index:index + 3] == "For":
                     pause = 2
                     result += "for"
+                elif code[index:index + 3] == "Any":
+                    pause = 2
+                    result += "any"
+                elif code[index:index + 3] == "All":
+                    pause = 2
+                    result += "all"
                 elif code[index:index + 2] == "||":
                     pause = 1
                     result += " or "
                 elif code[index:index + 2] == "&&":
                     pause = 1
                     result += " and "
-                elif code[index:index + 4] == "func":
+                elif code[index:index + 4] == "Func":
                     pause = 3
                     result += "def"
+                elif code[index:index + 6] == "Return":
+                    pause = 5
+                    result += "return"
                 elif character == "–":
                     result += "->"
                 elif code[index: index + 6] == "import":
