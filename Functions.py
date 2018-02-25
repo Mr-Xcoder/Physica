@@ -205,11 +205,3 @@ def Length(item: object) -> object:
 
 def Round(number: float, number_of_decimals: int = 0) -> float:
     return round(number, number_of_decimals)
-
-
-def LNot(item: object) -> bool:
-    return not item
-
-
-def LAnd(*items: [object]) -> bool:
-    return
