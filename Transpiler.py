@@ -24,7 +24,7 @@ class Transpiler:
                 elif character == "]":
                     result += ")"
                 elif character == "$":
-                    result += "globals()"
+                    result += " |apply| "
                 elif character == ";":
                     result += ","
                 elif character == ",":
@@ -78,6 +78,11 @@ class Transpiler:
                 elif code[index:index + 2] == "&&":
                     pause = 1
                     result += " and "
+                elif code[index:index + 4] == "func":
+                    pause = 3
+                    result += "def"
+                elif character == "–":
+                    result += "->"
                 elif code[index: index + 6] == "import":
                     raise ImportError("Python imports are specifically disallowed")
                 else:
