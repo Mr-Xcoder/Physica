@@ -23,10 +23,6 @@ class Transpiler:
                     result += "("
                 elif character == "]":
                     result += ")"
-                elif character == "(":
-                    result += "{"
-                elif character == ")":
-                    result += "}"
                 elif character == "@":
                     result += " |apply| "
                 elif character == ";":
@@ -64,6 +60,9 @@ class Transpiler:
                 elif code[index:index + 2] == "=>":
                     pause = 1
                     result += "lambda "
+                elif code[index:index + 2] == "->":
+                    pause = 1
+                    result += " = lambda "
                 elif code[index:index + 3] == "Sum":
                     pause = 2
                     result += "sum"
