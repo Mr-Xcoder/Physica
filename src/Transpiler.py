@@ -27,7 +27,7 @@ class Transpiler:
                     result += "{"
                 elif character == ")":
                     result += "}"
-                elif character == "$":
+                elif character == "@":
                     result += " |apply| "
                 elif character == ";":
                     result += ","
@@ -53,7 +53,7 @@ class Transpiler:
                     result += "else"
                 elif character == "√":
                     result += "Root"
-                elif character == "@":
+                elif character == "$":
                     result += "()"
                 elif character == "µ":
                     result += "FrictionCoefficient"
@@ -64,6 +64,9 @@ class Transpiler:
                 elif code[index:index + 2] == "=>":
                     pause = 1
                     result += "lambda "
+                elif code[index:index + 3] == "Sum":
+                    pause = 2
+                    result += "sum"
                 elif character == "~":
                     result += "::"
                 elif character == "{":
