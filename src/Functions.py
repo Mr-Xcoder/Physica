@@ -144,8 +144,7 @@ def Range(lower_bound: int, upper_bound: int, step: int = 1) -> list:
     if isinstance(lower_bound, int) and isinstance(upper_bound, int) and isinstance(step, int):
         if lower_bound <= upper_bound:
             return list(range(lower_bound, upper_bound + 1, step))
-        else:
-            return list(range(upper_bound, lower_bound + 1)[::-1][::step])
+        return []
     else:
         raise TypeError("Range arguments must all be integers")
 
