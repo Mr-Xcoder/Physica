@@ -159,7 +159,6 @@ def Input() -> object:
             return Transpiler().unformat_list(inp)
         except:
             return inp
-        return inp
 
 
 def STDIN() -> list:
@@ -170,12 +169,12 @@ def ARGV() -> list:
     return sys.argv[1:]
 
 
-def Str(item: object) -> str:
+def String(item: object) -> str:
     return str(item)
 
 
 def Element(item: collections.Sequence, index: int) -> object:
-    return item[index - 1]
+    return item[(index - 1) % len(item)]
 
 
 def Print(*objects, Sep: str = " ", End: str = "\n"):
@@ -186,3 +185,31 @@ def Print(*objects, Sep: str = " ", End: str = "\n"):
         else:
             result.append(element)
     print(*result, sep=Sep, end=End)
+
+
+def Evaluate(item: str) -> object:
+    try:
+        return Transpiler().unformat_list(item)
+    except:
+        return eval(item)
+
+
+def Length(item: object) -> object:
+    if isinstance(item, int):
+        return len(str(abs(item)))
+    elif isinstance(item, collections.Sequence):
+        return len(item)
+    else:
+        raise TypeError("The given arguments do not match any overloads for 'Length'")
+
+
+def Round(number: float, number_of_decimals: int = 0) -> float:
+    return round(number, number_of_decimals)
+
+
+def LNot(item: object) -> bool:
+    return not item
+
+
+def LAnd(*items: [object]) -> bool:
+    return
