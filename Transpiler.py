@@ -41,6 +41,12 @@ class Transpiler:
                 elif code[index:index+2] == "If":
                     pause = 1
                     result += "if"
+                elif code[index:index+7] == "Else If":
+                    pause = 6
+                    result += "elif"
+                elif code[index:index+4] == "Else":
+                    pause = 3
+                    result += "else"
                 elif character == "√":
                     result += "Root"
                 elif character == "@":
@@ -69,6 +75,8 @@ class Transpiler:
                     result += "!="
                 elif character == "!":
                     result += " not "
+                elif character == "∈":
+                    result += " in "
                 elif code[index:index + 3] == "For":
                     pause = 2
                     result += "for"
