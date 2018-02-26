@@ -155,7 +155,7 @@ def FullPrimeFac(integer: int) -> list:
 
 def SquareQ(number: float) -> bool:
     if number == int(number):
-        return Sqrt(number) == int(Sqrt(number))
+        return Root(number) == int(Root(number))
     else:
         return False
 
@@ -261,7 +261,6 @@ def Min(item: collections.Iterable) -> object:
 
 
 def Zip(object: list, filler: object = None) -> list:
-    import itertools
     return list(map(list, itertools.zip_longest(*object, fillvalue=filler)))
 
 
@@ -322,3 +321,8 @@ def Map(func: callable, item: collections.Iterable) -> list:
 
 def Filter(func: callable, item: collections.Iterable, *, Negated: bool = False) -> list:
     return list(filter((lambda x: not func(x) if Negated else func(x)), item))
+
+
+def Reduce(func: callable, item: collections.Iterable) -> collections.Iterable:
+    import functools
+    return functools.reduce(func, item)
