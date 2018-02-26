@@ -121,12 +121,12 @@ def Root(base: float, root: float = 2) -> float:
     return base ** (1 / root)
 
 
-def Map(*objects) -> list:
-    return list(map(*objects))
+def Map(func: callable, item: collections.Iterable) -> list:
+    return list(map(func, item))
 
 
-def Filter(*objects) -> list:
-    return list(filter(*objects))
+def Filter(func: callable, item: collections.Iterable, *, Negated: bool = False) -> list:
+    return list(filter((lambda x: not func(x) if Negated else func(x)), item))
 
 
 def Permutations(item: collections.Sequence) -> list:
@@ -204,3 +204,15 @@ def Length(item: object) -> object:
 
 def Round(number: float, number_of_decimals: int = 0) -> float:
     return round(number, number_of_decimals)
+
+
+def Max(item: collections.Iterable) -> object:
+    return max(item)
+
+
+def Min(item: collections.Iterable) -> object:
+    return min(item)
+
+
+def Sort(func: callable, item: collections.Sequence, *, Descending: bool = False) -> collections.Sequence:
+    return sorted(item, key=func, reverse=Descending)
