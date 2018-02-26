@@ -6,6 +6,8 @@ import sympy
 import itertools
 import sys
 
+sys.setrecursionlimit(10 ** 9)
+
 DegToRad = math.radians
 RadToDeg = math.degrees
 
@@ -207,8 +209,42 @@ def Min(item: collections.Iterable) -> object:
 
 
 def Zip(object: list, filler: object = None) -> list:
-    import itertools
     return list(map(list, itertools.zip_longest(*object, fillvalue=filler)))
+
+
+def Gamma(number: float) -> float:
+    return math.gamma(number)
+
+
+def Abs(number: float) -> float:
+    return abs(number)
+
+
+def FromBase(digital_representation: list, base: int) -> int:
+    result = 0
+    for digit in digital_representation:
+        result = base * result + digit
+    return result
+
+
+def Base(number: int, base: int) -> list:
+    if number == 0:
+        return [0]
+    result = []
+    while number > 0:
+        result = [number % base] + result
+        number //= base
+    return result
+
+
+def Flatten(item: list) -> list:
+    flat = []
+    if isinstance(item, list):
+        for element in item:
+            flat += Flatten(element)
+    else:
+        flat.append(item)
+    return flat
 
 
 def Sort(func: callable, item: collections.Sequence, *, Descending: bool = False) -> collections.Sequence:
