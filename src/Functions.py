@@ -324,5 +324,5 @@ def Filter(func: callable, item: collections.Iterable, *, Negated: bool = False)
 
 
 def Reduce(func: callable, item: collections.Iterable) -> collections.Iterable:
-    import functools
-    return functools.reduce(func, item)
+    from functools import reduce
+    return reduce(func, item)
