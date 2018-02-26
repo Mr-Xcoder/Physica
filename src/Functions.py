@@ -25,7 +25,7 @@ def Tan(deg: float) -> float:
 
 
 def Cot(deg: float) -> float:
-    return 1 / math.tan(DegToRad(deg))
+    return 1 / Tan(deg)
 
 
 def Sec(deg: float) -> float:
@@ -34,6 +34,46 @@ def Sec(deg: float) -> float:
 
 def Csc(deg: float) -> float:
     return 1 / Sin(deg)
+
+
+def Sinh(deg: float) -> float:
+    return math.sinh(DegToRad(deg))
+
+
+def Cosh(deg: float) -> float:
+    return math.cosh(DegToRad(deg))
+
+
+def Tanh(deg: float) -> float:
+    return math.tanh(DegToRad(deg))
+
+
+def Coth(deg: float) -> float:
+    return 1 / Tanh(deg)
+
+
+def Sech(deg: float) -> float:
+    return 1 / Cosh(deg)
+
+
+def Csch(deg: float) -> float:
+    return 1 / Sinh(deg)
+
+
+def Arcsin(sine: float) -> float:
+    return RadToDeg(math.asin(sine))
+
+
+def Arccos(cosine: float) -> float:
+    return RadToDeg(math.acos(cosine))
+
+
+def Arctan(tangent: float) -> float:
+    return RadToDeg(math.atan(tangent))
+
+
+def Arccot(cotangent: float) -> float:
+    return RadToDeg(math.atan(1 / cotangent))
 
 
 def SchwarzschildRadius(mass: float) -> float:
@@ -123,11 +163,22 @@ def Root(base: float, root: float = 2) -> float:
     return base ** (1 / root)
 
 
-def Permutations(item: collections.Sequence) -> list:
+def Permutations(item: collections.Iterable) -> list:
     perms = list(itertools.permutations(item))
     if isinstance(item, str):
         return list(map("".join, perms))
     return list(map(list, perms))
+
+
+def Join(item: collections.Iterable, separator: object) -> collections.Iterable:
+    if isinstance(separator, str) and all(isinstance(element, str) for element in item):
+        return separator.join(map(str, item))
+    result = []
+    for index, element in enumerate(item):
+        result.append(element)
+        if index != len(item) - 1:
+            result.append(separator)
+    return result
 
 
 def Slice(iterable: collections.Sequence, start: int = 0, end: int = 0, step: int = 1) -> collections.Sequence:
@@ -209,6 +260,7 @@ def Min(item: collections.Iterable) -> object:
 
 
 def Zip(object: list, filler: object = None) -> list:
+    import itertools
     return list(map(list, itertools.zip_longest(*object, fillvalue=filler)))
 
 
@@ -245,6 +297,18 @@ def Flatten(item: list) -> list:
     else:
         flat.append(item)
     return flat
+
+
+def NumericQ(item: object) -> bool:
+    return isinstance(item, int) or isinstance(item, float)
+
+
+def CharQ(item: object) -> bool:
+    return isinstance(item, str) and len(item) == 1
+
+
+def Deltas(item: collections.Sequence) -> list:
+    return [y - x if NumericQ(x) and NumericQ(y) else (ord(y) - ord(x) if CharQ(x) and CharQ(y) else None) for x, y in zip(item, item[1:])]
 
 
 def Sort(func: callable, item: collections.Sequence, *, Descending: bool = False) -> collections.Sequence:
