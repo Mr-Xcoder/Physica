@@ -206,6 +206,11 @@ def Min(item: collections.Iterable) -> object:
     return min(item)
 
 
+def Zip(object: list, filler: object = None) -> list:
+    import itertools
+    return list(map(list, itertools.zip_longest(*object, fillvalue=filler)))
+
+
 def Sort(func: callable, item: collections.Sequence, *, Descending: bool = False) -> collections.Sequence:
     return sorted(item, key=func, reverse=Descending)
 
