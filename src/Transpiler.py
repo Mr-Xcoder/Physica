@@ -114,7 +114,21 @@ class Transpiler:
 
     @staticmethod
     def format_list(item: list) -> str:
-        return "{" + "; ".join(map(repr, item)) + "}"
+        result = ""
+        item = str(item)
+        for index, character in enumerate(item):
+            if (item[: index].count("'") - item[: index].count("\\'")) % 2:
+                result += character
+            else:
+                if character == ",":
+                    result += ";"
+                elif character == "[":
+                    result += "{"
+                elif character == "]":
+                    result += "}"
+                else:
+                    result += character
+        return result
 
     @staticmethod
     def unformat_list(item: str) -> list:
