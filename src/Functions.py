@@ -121,14 +121,6 @@ def Root(base: float, root: float = 2) -> float:
     return base ** (1 / root)
 
 
-def Map(func: callable, item: collections.Iterable) -> list:
-    return list(map(func, item))
-
-
-def Filter(func: callable, item: collections.Iterable, *, Negated: bool = False) -> list:
-    return list(filter((lambda x: not func(x) if Negated else func(x)), item))
-
-
 def Permutations(item: collections.Sequence) -> list:
     perms = list(itertools.permutations(item))
     if isinstance(item, str):
@@ -216,3 +208,11 @@ def Min(item: collections.Iterable) -> object:
 
 def Sort(func: callable, item: collections.Sequence, *, Descending: bool = False) -> collections.Sequence:
     return sorted(item, key=func, reverse=Descending)
+
+
+def Map(func: callable, item: collections.Iterable) -> list:
+    return list(map(func, item))
+
+
+def Filter(func: callable, item: collections.Iterable, *, Negated: bool = False) -> list:
+    return list(filter((lambda x: not func(x) if Negated else func(x)), item))
