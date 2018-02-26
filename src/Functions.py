@@ -10,6 +10,11 @@ sys.setrecursionlimit(10 ** 9)
 
 DegToRad = math.radians
 RadToDeg = math.degrees
+Ord = ord
+Chr = chr
+Any = any
+All = all
+Sum = sum
 
 
 def Sin(deg: float) -> float:
