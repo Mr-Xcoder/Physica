@@ -121,10 +121,6 @@ def Differentiate(*objects) -> str:
     return str(sympy.diff(*objects))
 
 
-def Sqrt(number: float) -> float:
-    return number ** 0.5
-
-
 def PrimeQ(integer: int) -> bool:
     if integer == int(integer):
         return sympy.primetest.isprime(int(integer))
