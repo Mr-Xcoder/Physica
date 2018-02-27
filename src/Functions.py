@@ -15,6 +15,13 @@ Chr = chr
 Any = any
 All = all
 Sum = sum
+Str = str
+Set = set
+Int = int
+List = list
+Conjugate = complex.conjugate
+Sequence = collections.Sequence
+Enumerate = enumerate
 
 
 def Sin(deg: float) -> float:
@@ -164,20 +171,20 @@ def Root(base: float, root: float = 2) -> float:
     return base ** (1 / root)
 
 
-def Permutations(item: collections.Iterable) -> list:
-    perms = list(itertools.permutations(item))
-    if isinstance(item, str):
+def Permutations(collection: collections.Iterable) -> list:
+    perms = list(itertools.permutations(collection))
+    if isinstance(collection, str):
         return list(map("".join, perms))
     return list(map(list, perms))
 
 
-def Join(item: collections.Iterable, separator: object) -> collections.Iterable:
-    if isinstance(separator, str) and all(isinstance(element, str) for element in item):
-        return separator.join(map(str, item))
+def Join(collection: collections.Iterable, separator: object) -> collections.Iterable:
+    if isinstance(separator, str) and all(isinstance(element, str) for element in collection):
+        return separator.join(map(str, collection))
     result = []
-    for index, element in enumerate(item):
+    for index, element in enumerate(collection):
         result.append(element)
-        if index != len(item) - 1:
+        if index != len(collection) - 1:
             result.append(separator)
     return result
 
@@ -218,8 +225,8 @@ def String(item: object) -> str:
     return str(item)
 
 
-def Element(item: collections.Sequence, index: int) -> object:
-    return item[(index - 1) % len(item)]
+def Element(collection: collections.Sequence, index: int) -> object:
+    return collection[(index - 1) % len(collection)]
 
 
 def Print(*objects, Sep: str = " ", End: str = "\n"):
@@ -252,12 +259,35 @@ def Round(number: float, number_of_decimals: int = 0) -> float:
     return round(number, number_of_decimals)
 
 
-def Max(item: collections.Iterable) -> object:
-    return max(item)
+def Max(collection: collections.Iterable) -> object:
+    return max(collection)
 
 
-def Min(item: collections.Iterable) -> object:
-    return min(item)
+def Min(collection: collections.Iterable) -> object:
+    return min(collection)
+
+
+def Fst(collection: collections.Sequence) -> object:
+    return collection[0]
+
+
+def Lst(collection: collections.Sequence) -> object:
+    return collection[-1]
+
+
+def RunLengthEncode(collection: collections.Iterable) -> collections.Iterable:
+    return [(len(list(y)), x) for x, y in itertools.groupby(collection)]
+
+
+def RunLengthDecode(encoded: list) -> collections.Iterable:
+    result = []
+    for pair in encoded:
+        result.extend(pair[0] * [pair[1]])
+    return result
+
+
+def Group(collection: collections.Sequence) -> list:
+    return [Indices(collection, element) for element in Deduplicate(collection)]
 
 
 def Zip(object: list, filler: object = None) -> list:
@@ -289,13 +319,13 @@ def Base(number: int, base: int) -> list:
     return result
 
 
-def Flatten(item: list) -> list:
+def Flatten(collection: list) -> list:
     flat = []
-    if isinstance(item, list):
-        for element in item:
+    if isinstance(collection, list):
+        for element in collection:
             flat += Flatten(element)
     else:
-        flat.append(item)
+        flat.append(collection)
     return flat
 
 
@@ -307,22 +337,74 @@ def CharQ(item: object) -> bool:
     return isinstance(item, str) and len(item) == 1
 
 
-def Deltas(item: collections.Sequence) -> list:
-    return [y - x if NumericQ(x) and NumericQ(y) else (ord(y) - ord(x) if CharQ(x) and CharQ(y) else None) for x, y in zip(item, item[1:])]
+def Deltas(collection: collections.Sequence) -> list:
+    return [y - x if NumericQ(x) and NumericQ(y) else (ord(y) - ord(x) if CharQ(x) and CharQ(y) else None) for x, y in zip(collection, collection[1:])]
 
 
-def Sort(func: callable, item: collections.Sequence, *, Descending: bool = False) -> collections.Sequence:
-    return sorted(item, key=func, reverse=Descending)
+def Deduplicate(collection: collections.Sequence) -> collections.Sequence:
+    result = []
+    for element in collection:
+        if element not in result:
+                result.append(element)
+    return "".join(result) if isinstance(collection, str) else result
 
 
-def Map(func: callable, item: collections.Iterable) -> list:
-    return list(map(func, item))
+def Indices(collection: collections.Sequence, element: object) -> list:
+    indices = []
+    for index, elem in enumerate(collection):
+        if elem == element:
+            indices.append(index + 1)
+    return indices
 
 
-def Filter(func: callable, item: collections.Iterable, *, Negated: bool = False) -> list:
-    return list(filter((lambda x: not func(x) if Negated else func(x)), item))
+def Reshape(collection: list, shape: collections.Iterable) -> object:
+    import numpy
+    return list(map(list, numpy.reshape(collection, shape)))
 
 
-def Reduce(func: callable, item: collections.Iterable) -> collections.Iterable:
+def Powerset(collection: collections.Iterable) -> list:
+    listify = list(collection)
+    return list(map(list,itertools.chain.from_iterable(itertools.combinations(listify, r) for r in range(1, len(listify)+1))))
+
+
+def Split(collection: collections.Sequence, element: object) -> list:
+    result = [[]]
+    for elem in collection:
+        if elem == element:
+            result.append([])
+        else:
+            result[-1].append(elem)
+    return result
+
+
+def Reverse(collection: collections.Sequence) -> collections.Sequence:
+    return collection[::-1]
+
+
+def Floor(number: float) -> int:
+    return int(math.floor(number))
+
+
+def Ceil(number: float) -> int:
+    return int(math.ceil(number))
+
+
+def ReIm(number: complex) -> tuple:
+    return number.real, number.imag
+
+
+def Sort(func: callable, collection: collections.Sequence, *, Descending: bool = False) -> collections.Sequence:
+    return sorted(collection, key=func, reverse=Descending)
+
+
+def Map(func: callable, collection: collections.Iterable) -> list:
+    return list(map(func, collection))
+
+
+def Filter(func: callable, collection: collections.Iterable, *, Negated: bool = False) -> list:
+    return list(filter((lambda x: not func(x) if Negated else func(x)), collection))
+
+
+def Reduce(func: callable, collection: collections.Iterable) -> collections.Iterable:
     from functools import reduce
-    return reduce(func, item)
+    return reduce(func, collection)
