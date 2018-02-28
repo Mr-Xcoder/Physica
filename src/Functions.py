@@ -15,10 +15,10 @@ Chr = chr
 Any = any
 All = all
 Sum = sum
-Str = str
 Set = set
 Int = int
 List = list
+String = str
 Conjugate = complex.conjugate
 Sequence = collections.Sequence
 Enumerate = enumerate
@@ -219,10 +219,6 @@ def STDIN() -> list:
 
 def ARGV() -> list:
     return sys.argv[1:]
-
-
-def String(item: object) -> str:
-    return str(item)
 
 
 def Element(collection: collections.Sequence, index: int) -> object:
