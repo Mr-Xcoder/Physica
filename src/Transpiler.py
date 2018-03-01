@@ -57,6 +57,9 @@ class Transpiler:
                     result += "Differentiate"
                 elif character == "∫":
                     result += "Integrate"
+                elif code[index:index + 2] == "In":
+                    pause = 1
+                    result += "in"
                 elif code[index:index + 2] == "->":
                     pause = 1
                     result += "lambda "
