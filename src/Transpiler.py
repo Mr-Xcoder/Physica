@@ -63,8 +63,13 @@ class Transpiler:
                 elif code[index:index + 2] == "=>":
                     pause = 1
                     result += " = lambda "
-                elif character == "~":
+                elif character == "#":
                     result += "::"
+                elif code[index:index + 2] == "//":
+                    pause = 1
+                    result += "#"
+                elif character == "_":
+                    result += " _ "
                 elif character == "{":
                     result += "["
                 elif character == "}":
