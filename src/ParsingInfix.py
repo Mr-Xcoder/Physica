@@ -17,3 +17,4 @@ class Infix:
 
 Apply = Infix(lambda func, item: func(item))
 Map = Infix(lambda func, item: list(map(func, item)))
+Compose = Infix(lambda func1, func2: (lambda x: func1(func2(x))))
