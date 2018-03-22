@@ -1,9 +1,10 @@
 from Constants import *
 from Transpiler import *
-import math
 import collections
-import sympy
 import itertools
+import sympy
+import scipy.special
+import math
 import sys
 
 sys.setrecursionlimit(10 ** 9)
@@ -15,10 +16,11 @@ Chr = chr
 Any = any
 All = all
 Sum = sum
+Str = str
 Set = set
 Int = int
 List = list
-String = str
+Divmod = divmod
 Conjugate = complex.conjugate
 Sequence = collections.Sequence
 Enumerate = enumerate
@@ -221,6 +223,10 @@ def ARGV() -> list:
     return sys.argv[1:]
 
 
+def String(item: object) -> str:
+    return str(item)
+
+
 def Element(collection: collections.Sequence, index: int) -> object:
     return collection[(index - 1) % len(collection)]
 
@@ -389,6 +395,19 @@ def ReIm(number: complex) -> tuple:
     return number.real, number.imag
 
 
+def Compare(a: object, b: object) -> int:
+    return (a > b) - (a < b)
+
+
+def Intersection(a: collections.Sequence, b: collections.Sequence) -> collections.Sequence:
+    intersection = [x for x in a if x in b]
+    return "".join(intersection) if isinstance(a, str) else intersection
+
+
+def Binomial(a: int, b: int) -> int:
+    return scipy.special.comb(a, b)
+
+
 def Sort(func: callable, collection: collections.Sequence, *, Descending: bool = False) -> collections.Sequence:
     return sorted(collection, key=func, reverse=Descending)
 
@@ -398,7 +417,7 @@ def Map(func: callable, collection: collections.Iterable) -> list:
 
 
 def Filter(func: callable, collection: collections.Iterable, *, Negated: bool = False) -> list:
-    return list(filter((lambda x: not func(x) if Negated else func(x)), collection))
+    return list(filter((lambda elem: not func(elem) if Negated else func(elem)), collection))
 
 
 def Reduce(func: callable, collection: collections.Iterable) -> collections.Iterable:
