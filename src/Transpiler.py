@@ -42,6 +42,9 @@ class Transpiler:
                     result += "<="
                 elif character == "≥":
                     result += ">="
+                elif code[index:index + 2] == "::":
+                    pause = 1
+                    result += " |Filter| "
                 elif code[index:index + 2] == "If":
                     pause = 1
                     result += "if"
