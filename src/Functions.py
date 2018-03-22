@@ -1,9 +1,9 @@
-from Constants import *
 from Transpiler import *
+from Constants import *
+import scipy.special
 import collections
 import itertools
 import sympy
-import scipy.special
 import math
 import sys
 
