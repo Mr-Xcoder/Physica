@@ -27,6 +27,8 @@ class Transpiler:
                     result += " |Apply| "
                 elif character == "`":
                     result += " |Map| "
+                elif character == "∘":
+                    result += " |Compose| "
                 elif character == ";":
                     result += ","
                 elif character == ",":
