@@ -1,5 +1,6 @@
 # Inspired by http://code.activestate.com/recipes/384122/
 
+
 class Infix:
     def __init__(self, func):
         self.func = func
