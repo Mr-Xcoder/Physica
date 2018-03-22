@@ -24,7 +24,9 @@ class Transpiler:
                 elif character == "]":
                     result += ")"
                 elif character == "@":
-                    result += " |apply| "
+                    result += " |Apply| "
+                elif character == "`":
+                    result += " |Map| "
                 elif character == ";":
                     result += ","
                 elif character == ",":
