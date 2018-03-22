@@ -1,4 +1,4 @@
-# Taken from http://code.activestate.com/recipes/384122/
+# Inspired by http://code.activestate.com/recipes/384122/
 
 class Infix:
     def __init__(self, function):
@@ -10,4 +10,5 @@ class Infix:
     def __call__(self, value1, value2):
         return self.function(value1, value2)
 
-apply = Infix(lambda function, item: function(item))
+Apply = Infix(lambda function, item: function(item))
+Map = Infix(lambda function, item: list(map(function, item)))
