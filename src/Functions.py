@@ -248,13 +248,13 @@ def Evaluate(item: str) -> object:
         return eval(item)
 
 
-def Length(item: object) -> object:
+def Len(item: object) -> object:
     if isinstance(item, int):
         return len(str(abs(item)))
     elif isinstance(item, collections.Sequence):
         return len(item)
     else:
-        raise TypeError("The given arguments do not match any overloads for 'Length'")
+        raise TypeError("The given arguments do not match any overloads for 'Len'")
 
 
 def Round(number: float, number_of_decimals: int = 0) -> float:
