@@ -1,5 +1,5 @@
-from Transpiler import *
 from Constants import *
+from Parser import *
 import scipy.special
 import collections
 import itertools
@@ -210,7 +210,7 @@ def Input() -> object:
         return eval(inp)
     except (NameError, SyntaxError):
         try:
-            return Transpiler().unformat_list(inp)
+            return Parser().unformat_list(inp)
         except:
             return inp
 
@@ -235,7 +235,7 @@ def Print(*objects, Sep: str = " ", End: str = "\n"):
     result = []
     for element in objects:
         if isinstance(element, list):
-            result.append(Transpiler().format_list(element))
+            result.append(Parser().parse_list(element))
         else:
             result.append(element)
     print(*result, sep=Sep, end=End)
@@ -243,7 +243,7 @@ def Print(*objects, Sep: str = " ", End: str = "\n"):
 
 def Evaluate(item: str) -> object:
     try:
-        return Transpiler().unformat_list(item)
+        return Parser().unparse_list(item)
     except:
         return eval(item)
 
@@ -366,7 +366,7 @@ def Reshape(collection: list, shape: collections.Iterable) -> object:
 
 def Powerset(collection: collections.Iterable) -> list:
     listify = list(collection)
-    return list(map(list,itertools.chain.from_iterable(itertools.combinations(listify, r) for r in range(1, len(listify)+1))))
+    return list(map(list, itertools.chain.from_iterable(itertools.combinations(listify, r) for r in range(1, len(listify)+1))))
 
 
 def Split(collection: collections.Sequence, element: object) -> list:
