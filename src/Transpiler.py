@@ -1,154 +1,242 @@
-class Transpiler:
+from functools import reduce
 
+
+class Parser:
     restrict_unicode = False
 
     def __init__(self, *, restrict_unicode: bool = False):
         self.restrict_unicode = restrict_unicode
 
-    def transpile(self, code: str) -> str:
-        result = ""
+    def parse(self, program: str) -> str:
         pause = 0
+        string_mode = False
+        string_toggle = ""
+        transpilation_result = ""
 
-        if self.restrict_unicode and any(ord(character) > 127 for character in code):
-            raise UnicodeError("Use of characters outside the ASCII range 0 – 127 is forbidden.")
-
-        for index, character in enumerate(code):
-            if pause:
+        for index, character in enumerate(program):
+            if pause > 0:
                 pause -= 1
                 continue
-            if (code[: index].count("'") - code[: index].count("\\'")) % 2:
-                result += character
+
+            if self.restrict_unicode and ord(character > 127):
+                raise UnicodeError("The use of characters outside the ASCII range 0-127 is forbidden while the "
+                                   "--nounicode flag is enabled.")
             else:
-                if character == "[":
-                    result += "("
-                elif character == "]":
-                    result += ")"
-                elif character == "@":
-                    result += " |Apply| "
-                elif character == "`":
-                    result += " |Map| "
-                elif character == "∘":
-                    result += " |Compose| "
-                elif character == ";":
-                    result += ","
-                elif character == ",":
-                    result += ";"
-                elif character == "^":
-                    result += "**"
-                elif code[index:index + 2] == "**":
-                    pause = 1
-                    result += "^"
-                elif character == "≤":
-                    result += "<="
-                elif character == "≥":
-                    result += ">="
-                elif code[index:index + 2] == "::":
-                    pause = 1
-                    result += " |Filter| "
-                elif code[index:index + 2] == "If":
-                    pause = 1
-                    result += "if"
-                elif code[index:index + 7] == "Else If":
-                    pause = 6
-                    result += "elif"
-                elif code[index:index + 4] == "Else":
-                    pause = 3
-                    result += "else"
-                elif character == "√":
-                    result += "Root"
-                elif character == "$":
-                    result += "()"
-                elif character == "µ":
-                    result += "FrictionCoefficient"
-                elif character == "∂":
-                    result += "Differentiate"
-                elif character == "∫":
-                    result += "Integrate"
-                elif code[index:index + 2] == "In":
-                    pause = 1
-                    result += "in"
-                elif code[index:index + 2] == "->":
-                    pause = 1
-                    result += "lambda "
-                elif code[index:index + 2] == "=>":
-                    pause = 1
-                    result += " = lambda "
-                elif character == "#":
-                    result += "::"
-                elif code[index:index + 2] == "//":
-                    pause = 1
-                    result += "#"
-                elif character == "_":
-                    result += " _ "
-                elif character == "{":
-                    result += "["
-                elif character == "}":
-                    result += "]"
-                elif character == "…":
-                    result += "Range"
-                elif code[index: index + 5] == "Until":
-                    pause = 4
-                    result += "while not"
-                elif character == "≠":
-                    result += "!="
-                elif character == "!":
-                    result += " not "
-                elif character == "∈":
-                    result += " in "
-                elif code[index:index + 3] == "For":
-                    pause = 2
-                    result += "for"
-                elif code[index:index + 2] == "||":
-                    pause = 1
-                    result += " or "
-                elif code[index:index + 2] == "&&":
-                    pause = 1
-                    result += " and "
-                elif code[index:index + 4] == "Func":
-                    pause = 3
-                    result += "def"
-                elif code[index:index + 6] == "Return":
-                    pause = 5
-                    result += "return"
-                elif character == "–":
-                    result += "->"
-                elif code[index: index + 6] == "import":
-                    raise ImportError("Python imports are specifically disallowed")
+                is_quote = character == "\"" or character == "'"
+
+                if index > 1:
+                    is_escaped = program[index-1] == "\\" and program[index-2] != "\\"
+                elif index == 1:
+                    is_escaped = program[index-1] == "\\"
                 else:
-                    result += character
-        return result
+                    is_escaped = False
+
+                if not string_mode and is_quote:
+                    string_mode = True
+                    string_toggle = character
+                    transpilation_result += character
+                elif string_mode and not is_escaped:
+                    if character == string_toggle:
+                        string_mode = False
+                        string_toggle = ""
+                        transpilation_result += character
+                    else:
+                        transpilation_result += character
+
+                else:
+                    if program[index:index+2] == "@@":
+                        pause = 1
+                        transpilation_result += " |Map| "
+                    elif program[index:index+2] == "$$":
+                        pause = 1
+                        transpilation_result += " |Filter| "
+                    elif character == "∘":
+                        transpilation_result += " |Compose| "
+                    elif character == "@":
+                        transpilation_result += " |Apply| "
+                    elif program[index:index+2] == "|>":
+                        pause = 1
+                        transpilation_result += ";"
+                    elif program[index:index+2] == "::":
+                        pause = 1
+                        transpilation_result += "->"
+                    elif program[index:index+2] == "->":
+                        pause = 1
+                        transpilation_result += "lambda "
+                    elif program[index:index+2] == "=>":
+                        pause = 1
+                        transpilation_result += " = lambda "
+                    elif character == "[":
+                        transpilation_result += "("
+                    elif character == "]":
+                        transpilation_result += ")"
+                    elif character == "≤":
+                        transpilation_result += "<="
+                    elif character == "≥":
+                        transpilation_result += ">="
+                    elif character == ";":
+                        transpilation_result += ","
+                    elif character == ",":
+                        transpilation_result += "."
+                    elif character == "÷":
+                        transpilation_result += "//"
+                    elif program[index:index + 2] == "//":
+                        pause = 1
+                        transpilation_result += "#"
+                    elif character == "_":
+                        transpilation_result += " _ "
+                    elif character == "{":
+                        transpilation_result += "["
+                    elif character == "}":
+                        transpilation_result += "]"
+                    elif character in "¬!":
+                        transpilation_result += " not "
+                    elif character == "…":
+                        transpilation_result += "Range"
+                    elif program[index: index + 5] == "Until":
+                        pause = 4
+                        transpilation_result += "while not"
+                    elif character == "≠":
+                        transpilation_result += "!="
+                    elif character == "∈":
+                        transpilation_result += " in "
+                    elif program[index:index + 3] == "For":
+                        pause = 2
+                        transpilation_result += "for"
+                    elif program[index:index + 2] == "||":
+                        pause = 1
+                        transpilation_result += " or "
+                    elif program[index:index + 2] == "&&":
+                        pause = 1
+                        transpilation_result += " and "
+                    elif program[index:index + 4] == "Func":
+                        pause = 3
+                        transpilation_result += "def"
+                    elif program[index:index + 6] == "Return":
+                        pause = 5
+                        transpilation_result += "return"
+                    elif program[index:index + 2] == "If":
+                        pause = 1
+                        transpilation_result += "if"
+                    elif program[index:index + 7] == "Else If":
+                        pause = 6
+                        transpilation_result += "elif"
+                    elif program[index:index + 4] == "Else":
+                        pause = 3
+                        transpilation_result += "else"
+                    elif character == "√":
+                        transpilation_result += "Root"
+                    elif character == "$":
+                        transpilation_result += "()"
+                    elif character == "µ":
+                        transpilation_result += "FrictionCoefficient"
+                    elif character == "∂":
+                        transpilation_result += "Differentiate"
+                    elif character == "∫":
+                        transpilation_result += "Integrate"
+                    elif program[index:index + 2] == "In":
+                        pause = 1
+                        transpilation_result += "in"
+                    else:
+                        transpilation_result += character
+        return transpilation_result
 
     @staticmethod
-    def format_list(item: list) -> str:
-        result = ""
-        item = str(item)
-        for index, character in enumerate(item):
-            if (item[: index].count("'") - item[: index].count("\\'")) % 2:
-                result += character
+    def parse_list(item: list) -> str:
+        string_mode = False
+        parse_result = ""
+        string_toggle = ""
+        obj = str(item)
+
+        for index, character in enumerate(obj):
+            is_quote = character == "\"" or character == "'"
+
+            if index > 1:
+                is_escaped = obj[index - 1] == "\\" and obj[index - 2] != "\\"
+            elif index == 1:
+                is_escaped = obj[index - 1] == "\\"
+            else:
+                is_escaped = False
+
+            if not string_mode and is_quote:
+                string_mode = True
+                string_toggle = character
+                parse_result += character
+            elif string_mode and not is_escaped:
+                if character == string_toggle:
+                    string_mode = False
+                    string_toggle = ""
+                    parse_result += character
+                else:
+                    parse_result += character
             else:
                 if character == ",":
-                    result += ";"
+                    parse_result += ";"
                 elif character == "[":
-                    result += "{"
+                    parse_result += "{"
                 elif character == "]":
-                    result += "}"
+                    parse_result += "}"
                 else:
-                    result += character
-        return result
+                    parse_result += character
+        return parse_result
 
     @staticmethod
-    def unformat_list(item: str) -> list:
-        result = ""
+    def unparse_list(item: str) -> list:
+        string_mode = False
+        parse_result = ""
+        string_toggle = ""
+
         for index, character in enumerate(item):
-            if (item[: index].count("'") - item[: index].count("\\'")) % 2:
-                result += character
+            is_quote = character == "\"" or character == "'"
+
+            if index > 1:
+                is_escaped = item[index - 1] == "\\" and item[index - 2] != "\\"
+            elif index == 1:
+                is_escaped = item[index - 1] == "\\"
+            else:
+                is_escaped = False
+
+            if not string_mode and is_quote:
+                string_mode = True
+                string_toggle = character
+                parse_result += character
+            elif string_mode and not is_escaped:
+                if character == string_toggle:
+                    string_mode = False
+                    string_toggle = ""
+                    parse_result += character
+                else:
+                    parse_result += character
             else:
                 if character == ";":
-                    result += ","
+                    parse_result += ","
                 elif character == "{":
-                    result += "["
+                    parse_result += "["
                 elif character == "}":
-                    result += "]"
+                    parse_result += "]"
                 else:
-                    result += character
-        return eval(result)
+                    parse_result += character
+        return eval(parse_result)
+
+
+# Inspired by http://program.activestate.com/recipes/384122/
+
+class Infix:
+    def __init__(self, func):
+        self.func = func
+
+    def __ror__(self, other):
+        return Infix(lambda x, self=self, other=other: self.func(other, x))
+
+    def __or__(self, other):
+        return self.func(other)
+
+    def __call__(self, value1, value2):
+        return self.func(value1, value2)
+
+
+Apply = Infix(lambda func, item: func(item))
+Map = Infix(lambda func, item: list(map(func, item)))
+Filter = Infix(lambda func, item: list(filter(func, item)))
+Compose = Infix(lambda func1, func2: (lambda x: func1(func2(x))))
+Reduce = Infix(lambda func, item: reduce(func, item))
