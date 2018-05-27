@@ -210,7 +210,7 @@ def Input() -> object:
         return eval(inp)
     except (NameError, SyntaxError):
         try:
-            return Parser().unformat_list(inp)
+            return Parser().unparse_list(inp)
         except:
             return inp
 
