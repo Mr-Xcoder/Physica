@@ -77,6 +77,8 @@ class Parser:
                         transpilation_result += " = lambda "
                     elif character == "[":
                         transpilation_result += "("
+                    elif character == "×":
+                        transpilation_result += " |Prod| "
                     elif character == "]":
                         transpilation_result += ")"
                     elif character == "≤":
@@ -249,3 +251,4 @@ Map = Infix(lambda func, item: list(map(func, item)))
 Filter = Infix(lambda func, item: list(filter(func, item)))
 Compose = Infix(lambda func1, func2: (lambda x: func1(func2(x))))
 Reduce = Infix(lambda func, item: reduce(func, item))
+Prod = Infix(lambda item1, item2: __import__('Functions').GenMul(item1, item2))
