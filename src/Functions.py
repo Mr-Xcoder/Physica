@@ -241,6 +241,19 @@ def Print(*objects, Sep: str = " ", End: str = "\n"):
     print(*result, sep=Sep, end=End)
 
 
+def Replace(string: collections.Iterable, text1: collections.Iterable, text2: collections.Iterable) -> collections.Iterable:
+    if isinstance(string, str) and isinstance(text1, str) and isinstance(text2, str):
+        return string.replace(text1, text2)
+    elif isinstance(text1, list) and isinstance(text2, list) and len(text1) == len(text2):
+        string_copy = string
+        for a in zip(text1, text2):
+            string_copy = string_copy.replace(*a)
+        return string_copy
+    elif isinstance(string, list):
+        return [element if element != text1 else text2 for element in string]
+    return string
+
+
 def Eval(item: str) -> object:
     try:
         return eval(Parser().parse(item))
