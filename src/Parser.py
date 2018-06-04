@@ -1,4 +1,5 @@
 from functools import reduce
+from string import ascii_letters as letters
 
 
 class Parser:
@@ -18,9 +19,17 @@ class Parser:
                 pause -= 1
                 continue
 
+            def validate(*indices, restricted_set = letters) -> bool:
+                characters = [program[ind] for ind in indices if 0 <= ind < len(program)]
+                for char in characters:
+                    if char in restricted_set:
+                        return False
+                return True
+
             if self.restrict_unicode and ord(character > 127):
                 raise UnicodeError("The use of characters outside the ASCII range 0-127 is forbidden while the "
                                    "--nounicode flag is enabled.")
+
             else:
                 is_quote = character == "\"" or character == "'"
 
@@ -62,7 +71,7 @@ class Parser:
                         transpilation_result += "->"
                     elif program[index:index+2] == "->":
                         pause = 1
-                        transpilation_result += "lambda "
+                        transpilation_result += " lambda "
                     elif program[index:index+2] == "=>":
                         pause = 1
                         transpilation_result += " = lambda "
@@ -76,6 +85,8 @@ class Parser:
                         transpilation_result += ">="
                     elif character == ";":
                         transpilation_result += ","
+                    elif character == "^":
+                        transpilation_result += "**"
                     elif character == ",":
                         transpilation_result += "."
                     elif character == "÷":
@@ -83,8 +94,6 @@ class Parser:
                     elif program[index:index + 2] == "//":
                         pause = 1
                         transpilation_result += "#"
-                    elif character == "_":
-                        transpilation_result += " _ "
                     elif character == "{":
                         transpilation_result += "["
                     elif character == "}":
@@ -92,36 +101,36 @@ class Parser:
                     elif character in "¬!":
                         transpilation_result += " not "
                     elif character == "…":
-                        transpilation_result += "Range"
+                        transpilation_result += "Range "
                     elif program[index: index + 5] == "Until":
                         pause = 4
-                        transpilation_result += "while not"
+                        transpilation_result += "while not "
                     elif character == "≠":
                         transpilation_result += "!="
                     elif character == "∈":
                         transpilation_result += " in "
-                    elif program[index:index + 3] == "For":
+                    elif program[index:index + 3] == "For" and validate(index-1, index+3):
                         pause = 2
-                        transpilation_result += "for"
+                        transpilation_result += "for "
                     elif program[index:index + 2] == "||":
                         pause = 1
                         transpilation_result += " or "
                     elif program[index:index + 2] == "&&":
                         pause = 1
                         transpilation_result += " and "
-                    elif program[index:index + 4] == "Func":
+                    elif program[index:index + 4] == "Func" and validate(index-1, index+4):
                         pause = 3
-                        transpilation_result += "def"
-                    elif program[index:index + 6] == "Return":
+                        transpilation_result += "def "
+                    elif program[index:index + 6] == "Return" and validate(index-1, index+6):
                         pause = 5
-                        transpilation_result += "return"
-                    elif program[index:index + 2] == "If":
+                        transpilation_result += "return "
+                    elif program[index:index + 2] == "If" and validate(index-1, index+2):
                         pause = 1
                         transpilation_result += "if"
-                    elif program[index:index + 7] == "Else If":
+                    elif program[index:index + 7] == "Else If" and validate(index-1, index+7):
                         pause = 6
                         transpilation_result += "elif"
-                    elif program[index:index + 4] == "Else":
+                    elif program[index:index + 4] == "Else" and validate(index-1, index+4):
                         pause = 3
                         transpilation_result += "else"
                     elif character == "√":
@@ -134,9 +143,9 @@ class Parser:
                         transpilation_result += "Differentiate"
                     elif character == "∫":
                         transpilation_result += "Integrate"
-                    elif program[index:index + 2] == "In":
+                    elif program[index:index + 2] == "In" and validate(index-1, index+2):
                         pause = 1
-                        transpilation_result += "in"
+                        transpilation_result += " in "
                     else:
                         transpilation_result += character
         return transpilation_result
