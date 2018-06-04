@@ -241,11 +241,14 @@ def Print(*objects, Sep: str = " ", End: str = "\n"):
     print(*result, sep=Sep, end=End)
 
 
-def Evaluate(item: str) -> object:
+def Eval(item: str) -> object:
     try:
-        return Parser().unparse_list(item)
+        return eval(Parser().parse(item))
     except:
-        return eval(item)
+        try:
+            return Parser().unparse_list(item)
+        except:
+            raise ValueError("Failed to evaluate the given piece of code.")
 
 
 def Len(item: object) -> object:
