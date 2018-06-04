@@ -337,6 +337,31 @@ def Base(number: int, base: int) -> list:
     return result
 
 
+def Cycle(item: collections.Iterable, length: int) -> collections.Iterable:
+    item_copy = item
+    if len(item_copy) > length:
+        return item_copy[:length]
+    while len(item_copy) < length:
+        item_copy += item[:length-len(item_copy)]
+    return item_copy
+
+
+def GenMul(item1: object, item2: object) -> object:
+    if NumericQ(item1) and NumericQ(item2):
+        return item1 * item2
+    elif NumericQ(item1) and isinstance(item2, list):
+        return [GenMul(item1, element) for element in item2]
+    elif NumericQ(item2) and isinstance(item1, list):
+        return [GenMul(item2, element) for element in item1]
+    elif isinstance(item1, list) and isinstance(item2, list) and all(map(NumericQ, item1 + item2)):
+        mat1 = min(item1, item2, key=len)
+        mat2 = item1 if mat1 == item2 else item2
+        return [x * y for x, y in zip(Cycle(mat1, len(mat2)), mat2)]
+    else:
+        item2_zip = list(zip(*item2))
+        return [[sum(a * b for a, b in zip(a_row, b_column)) for b_column in item2_zip] for a_row in item1]
+
+
 def Flatten(collection: list) -> list:
     flat = []
     if isinstance(collection, list):
