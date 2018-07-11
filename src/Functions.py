@@ -1,5 +1,5 @@
-from Transpiler import *
 from Constants import *
+from Parser import *
 import scipy.special
 import collections
 import itertools
