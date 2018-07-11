@@ -1,5 +1,5 @@
+from Transpiler import *
 from Constants import *
-from Parser import *
 import scipy.special
 import collections
 import itertools
@@ -195,7 +195,15 @@ def Slice(iterable: collections.Sequence, start: int = 0, end: int = 0, step: in
     return iterable[start:end or len(iterable):step]
 
 
-def Range(lower_bound: int, upper_bound: int, step: int = 1) -> list:
+def Range(*arguments) -> list:
+    lower_bound = 0; step = 1
+    if len(arguments) == 3:
+        step = arguments[-1]
+    if len(arguments) >= 2:
+        lower_bound = arguments[0]
+        upper_bound = arguments[1]
+    else:
+        upper_bound = arguments[0]
     if isinstance(lower_bound, int) and isinstance(upper_bound, int) and isinstance(step, int):
         if lower_bound <= upper_bound:
             return list(range(lower_bound, upper_bound + 1, step))
@@ -210,7 +218,7 @@ def Input() -> object:
         return eval(inp)
     except (NameError, SyntaxError):
         try:
-            return Parser().unparse_list(inp)
+            return Transpiler().unformat_list(inp)
         except:
             return inp
 
@@ -235,33 +243,17 @@ def Print(*objects, Sep: str = " ", End: str = "\n"):
     result = []
     for element in objects:
         if isinstance(element, list):
-            result.append(Parser().parse_list(element))
+            result.append(Transpiler().format_list(element))
         else:
             result.append(element)
     print(*result, sep=Sep, end=End)
 
 
-def Replace(string: collections.Iterable, text1: collections.Iterable, text2: collections.Iterable) -> collections.Iterable:
-    if isinstance(string, str) and isinstance(text1, str) and isinstance(text2, str):
-        return string.replace(text1, text2)
-    elif isinstance(text1, list) and isinstance(text2, list) and len(text1) == len(text2):
-        string_copy = string
-        for a in zip(text1, text2):
-            string_copy = string_copy.replace(*a)
-        return string_copy
-    elif isinstance(string, list):
-        return [element if element != text1 else text2 for element in string]
-    return string
-
-
-def Eval(item: str) -> object:
+def Evaluate(item: str) -> object:
     try:
-        return eval(Parser().parse(item))
+        return Transpiler().unformat_list(item)
     except:
-        try:
-            return Parser().unparse_list(item)
-        except:
-            raise ValueError("Failed to evaluate the given piece of code.")
+        return eval(item)
 
 
 def Len(item: object) -> object:
@@ -337,31 +329,6 @@ def Base(number: int, base: int) -> list:
     return result
 
 
-def Cycle(item: collections.Iterable, length: int) -> collections.Iterable:
-    item_copy = item
-    if len(item_copy) > length:
-        return item_copy[:length]
-    while len(item_copy) < length:
-        item_copy += item[:length-len(item_copy)]
-    return item_copy
-
-
-def GenMul(item1: object, item2: object) -> object:
-    if NumericQ(item1) and NumericQ(item2):
-        return item1 * item2
-    elif NumericQ(item1) and isinstance(item2, list):
-        return [GenMul(item1, element) for element in item2]
-    elif NumericQ(item2) and isinstance(item1, list):
-        return [GenMul(item2, element) for element in item1]
-    elif isinstance(item1, list) and isinstance(item2, list) and all(map(NumericQ, item1 + item2)):
-        mat1 = min(item1, item2, key=len)
-        mat2 = item1 if mat1 == item2 else item2
-        return [x * y for x, y in zip(Cycle(mat1, len(mat2)), mat2)]
-    else:
-        item2_zip = list(zip(*item2))
-        return [[sum(a * b for a, b in zip(a_row, b_column)) for b_column in item2_zip] for a_row in item1]
-
-
 def Flatten(collection: list) -> list:
     flat = []
     if isinstance(collection, list):
@@ -407,7 +374,7 @@ def Reshape(collection: list, shape: collections.Iterable) -> object:
 
 def Powerset(collection: collections.Iterable) -> list:
     listify = list(collection)
-    return list(map(list, itertools.chain.from_iterable(itertools.combinations(listify, r) for r in range(1, len(listify)+1))))
+    return list(map(list,itertools.chain.from_iterable(itertools.combinations(listify, r) for r in range(1, len(listify)+1))))
 
 
 def Split(collection: collections.Sequence, element: object) -> list:
