@@ -55,6 +55,9 @@ class Parser:
                     if program[index:index+2] == "@@":
                         pause = 1
                         transpilation_result += " |Map| "
+                    elif program[index:index + 2] == "%%":
+                        pause = 1
+                        transpilation_result += " :: "
                     elif program[index:index+2] == "$$":
                         pause = 1
                         transpilation_result += " |Filter| "
