@@ -218,7 +218,7 @@ def Input() -> object:
         return eval(inp)
     except (NameError, SyntaxError):
         try:
-            return Transpiler().unformat_list(inp)
+            return Parser().unparse_list(inp)
         except:
             return inp
 
@@ -243,7 +243,7 @@ def Print(*objects, Sep: str = " ", End: str = "\n"):
     result = []
     for element in objects:
         if isinstance(element, list):
-            result.append(Transpiler().format_list(element))
+            result.append(Parser().parse_list(element))
         else:
             result.append(element)
     print(*result, sep=Sep, end=End)
@@ -251,7 +251,7 @@ def Print(*objects, Sep: str = " ", End: str = "\n"):
 
 def Evaluate(item: str) -> object:
     try:
-        return Transpiler().unformat_list(item)
+        return Parser().unparse_list(item)
     except:
         return eval(item)
 
