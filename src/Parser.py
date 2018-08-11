@@ -1,7 +1,6 @@
 from functools import reduce
 from string import ascii_letters as letters
 
-
 class Parser:
     restrict_unicode = False
 
@@ -248,7 +247,7 @@ class Infix:
 
 Apply = Infix(lambda func, item: func(item))
 Map = Infix(lambda func, item: list(map(func, item)))
-Filter = Infix(lambda func, item: list(filter(func, item)))
 Compose = Infix(lambda func1, func2: (lambda x: func1(func2(x))))
+Filter = Infix(lambda func, item: list(filter(func, item)))
 Reduce = Infix(lambda func, item: reduce(func, item))
 Prod = Infix(lambda item1, item2: __import__('Functions').GenMul(item1, item2))
