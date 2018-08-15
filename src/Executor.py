@@ -1,6 +1,5 @@
-import Parser
+from Functions import *
 
 if __name__ == "__main__":
-    code = open(__import__("sys").argv[1], "r", encoding='utf-8').read()
-    parsed_code = Parser.Parser().parse(code)
-    exec("from Functions import *\n\n" + parsed_code)
+    code = open(sys.argv[1], "r", encoding='utf-8').read()
+    exec(Parser().parse(code))
