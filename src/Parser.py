@@ -1,6 +1,7 @@
 from functools import reduce
 from string import ascii_letters as letters
 
+
 class Parser:
     restrict_unicode = False
 
@@ -18,7 +19,7 @@ class Parser:
                 pause -= 1
                 continue
 
-            def validate(*indices, restricted_set = letters) -> bool:
+            def validate(*indices, restricted_set=letters) -> bool:
                 characters = [program[ind] for ind in indices if 0 <= ind < len(program)]
                 for char in characters:
                     if char in restricted_set:
@@ -33,9 +34,9 @@ class Parser:
                 is_quote = character == "\"" or character == "'"
 
                 if index > 1:
-                    is_escaped = program[index-1] == "\\" and program[index-2] != "\\"
+                    is_escaped = program[index - 1] == "\\" and program[index - 2] != "\\"
                 elif index == 1:
-                    is_escaped = program[index-1] == "\\"
+                    is_escaped = program[index - 1] == "\\"
                 else:
                     is_escaped = False
 
@@ -52,35 +53,41 @@ class Parser:
                         transpilation_result += character
 
                 else:
-                    if program[index:index+2] == "@@":
+                    if program[index:index + 2] == "##":
                         pause = 1
-                        transpilation_result += " |Map| "
+                        transpilation_result += " |red| "
+                    elif program[index:index + 2] == "??":
+                        pause = 1
+                        transpilation_result += " == None and "
+                    elif program[index:index + 2] == "@@":
+                        pause = 1
+                        transpilation_result += " |each| "
                     elif program[index:index + 2] == "%%":
                         pause = 1
                         transpilation_result += " :: "
-                    elif program[index:index+2] == "$$":
+                    elif program[index:index + 2] == "$$":
                         pause = 1
-                        transpilation_result += " |Filter| "
+                        transpilation_result += " |filt| "
                     elif character == "∘":
-                        transpilation_result += " |Compose| "
+                        transpilation_result += " |comp| "
                     elif character == "@":
-                        transpilation_result += " |Apply| "
-                    elif program[index:index+2] == "|>":
+                        transpilation_result += " |apply| "
+                    elif program[index:index + 2] == "|>":
                         pause = 1
                         transpilation_result += ";"
-                    elif program[index:index+2] == "::":
+                    elif program[index:index + 2] == "::":
                         pause = 1
                         transpilation_result += "->"
-                    elif program[index:index+2] == "->":
+                    elif program[index:index + 2] == "->":
                         pause = 1
-                        transpilation_result += " lambda "
-                    elif program[index:index+2] == "=>":
+                        transpilation_result += "lambda "
+                    elif program[index:index + 2] == "=>":
                         pause = 1
                         transpilation_result += " = lambda "
                     elif character == "[":
                         transpilation_result += "("
                     elif character == "×":
-                        transpilation_result += " |Prod| "
+                        transpilation_result += " |prod| "
                     elif character == "]":
                         transpilation_result += ")"
                     elif character == "≤":
@@ -93,6 +100,8 @@ class Parser:
                         transpilation_result += "**"
                     elif character == ",":
                         transpilation_result += "."
+                    elif character == "?":
+                        transpilation_result += " None "
                     elif character == "÷":
                         transpilation_result += "//"
                     elif program[index:index + 2] == "//":
@@ -102,6 +111,8 @@ class Parser:
                         transpilation_result += "["
                     elif character == "}":
                         transpilation_result += "]"
+                    elif character == ":":
+                        transpilation_result += ": "
                     elif character in "¬!":
                         transpilation_result += " not "
                     elif character == "…":
@@ -113,7 +124,7 @@ class Parser:
                         transpilation_result += "!="
                     elif character == "∈":
                         transpilation_result += " in "
-                    elif program[index:index + 3] == "For" and validate(index-1, index+3):
+                    elif program[index:index + 3] == "For" and validate(index - 1, index + 3):
                         pause = 2
                         transpilation_result += "for "
                     elif program[index:index + 2] == "||":
@@ -122,19 +133,19 @@ class Parser:
                     elif program[index:index + 2] == "&&":
                         pause = 1
                         transpilation_result += " and "
-                    elif program[index:index + 4] == "Func" and validate(index-1, index+4):
+                    elif program[index:index + 4] == "Func" and validate(index - 1, index + 4):
                         pause = 3
                         transpilation_result += "def "
-                    elif program[index:index + 6] == "Return" and validate(index-1, index+6):
+                    elif program[index:index + 6] == "Return" and validate(index - 1, index + 6):
                         pause = 5
                         transpilation_result += "return "
-                    elif program[index:index + 2] == "If" and validate(index-1, index+2):
+                    elif program[index:index + 2] == "If" and validate(index - 1, index + 2):
                         pause = 1
                         transpilation_result += "if"
-                    elif program[index:index + 7] == "Else If" and validate(index-1, index+7):
+                    elif program[index:index + 7] == "Else If" and validate(index - 1, index + 7):
                         pause = 6
                         transpilation_result += "elif"
-                    elif program[index:index + 4] == "Else" and validate(index-1, index+4):
+                    elif program[index:index + 4] == "Else" and validate(index - 1, index + 4):
                         pause = 3
                         transpilation_result += "else"
                     elif character == "√":
@@ -147,7 +158,7 @@ class Parser:
                         transpilation_result += "Differentiate"
                     elif character == "∫":
                         transpilation_result += "Integrate"
-                    elif program[index:index + 2] == "In" and validate(index-1, index+2):
+                    elif program[index:index + 2] == "In" and validate(index - 1, index + 2):
                         pause = 1
                         transpilation_result += " in "
                     else:
@@ -238,6 +249,7 @@ class Infix:
     def __init__(self, func):
         self.func = func
 
+    # noinspection PyShadowingNames
     def __ror__(self, other):
         return Infix(lambda x, self=self, other=other: self.func(other, x))
 
@@ -248,9 +260,9 @@ class Infix:
         return self.func(value1, value2)
 
 
-Apply = Infix(lambda func, item: func(item))
-Map = Infix(lambda func, item: list(map(func, item)))
-Compose = Infix(lambda func1, func2: (lambda x: func1(func2(x))))
-Filter = Infix(lambda func, item: list(filter(func, item)))
-Reduce = Infix(lambda func, item: reduce(func, item))
-Prod = Infix(lambda item1, item2: __import__('Functions').GenMul(item1, item2))
+apply = Infix(lambda func, item: func(item))
+each = Infix(lambda func, item: list(map(func, item)))
+comp = Infix(lambda func1, func2: (lambda x: func1(func2(x))))
+filt = Infix(lambda func, item: list(filter(func, item)))
+red = Infix(lambda func, item: reduce(func, item))
+prod = Infix(lambda item1, item2: __import__('Functions').GenMul(item1, item2))
