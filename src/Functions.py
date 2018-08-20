@@ -1,5 +1,6 @@
 from sympy.solvers import solve
 from scipy.special import comb
+from numpy import reshape
 from typing import Union
 from Constants import *
 from Parser import *
@@ -21,13 +22,13 @@ Set = set
 Dict = dict
 List = list
 Divmod = divmod
+Count = str.count
 Enumerate = enumerate
 Symbol = sympy.Symbol
 DegToRad = math.radians
 RadToDeg = math.degrees
-Conjugate = complex.conjugate
 Sequence = collections.Sequence
-
+Conjugate = Conj = complex.conjugate
 
 
 def Sin(deg: float) -> float:
@@ -94,12 +95,11 @@ def Arccot(cotangent: float) -> float:
     return RadToDeg(math.atan(1 / cotangent))
 
 
-
 def ARGV() -> list:
     return sys.argv[1:]
 
 
-def Base(number: int, base: int) -> list:
+def Base(number: int, base: int = 10) -> list:
     if number == 0:
         return [0]
     result = []
@@ -113,24 +113,43 @@ def Binomial(a: int, b: int) -> int:
     return comb(a, b, exact=True)
 
 
-def CompositeQ(integer: int) -> bool:
-    return not PrimeQ(integer)
-
-
-def CharQ(obj: object) -> bool:
-    return isinstance(obj, str) and len(obj) == 1
+def Calculate(equation: Union[list, str], replacement: list) -> Union[list, float]:
+    replacements = dict(replacement)
+    if isinstance(equation, str):
+        expression = Expression(equation)
+        for variable in replacements:
+            expression = expression.replace(variable, str(replacements.get(variable)))
+        return eval(expression)
+    results = []
+    for expression in map(Expression, equation):
+        for replacement in replacements:
+            expression = expression.replace(replacement, str(replacements.get(replacement)))
+        results.append(eval(expression))
+    return results
 
 
 def Ceil(number: float) -> int:
     return int(math.ceil(number))
 
 
+def CharQ(obj: object) -> bool:
+    return isinstance(obj, str) and len(obj) == 1
+
+
 def Compare(a: object, b: object) -> int:
     return (a > b) - (a < b)
 
 
-def Differentiate(*objects) -> str:
-    return str(sympy.diff(*objects))
+def CompositeQ(integer: int) -> bool:
+    return not PrimeQ(integer)
+
+
+def CumulativeReduce(func: callable, collection: collections.Sequence) -> list:
+    return list(itertools.accumulate(collection, func=func))
+
+
+def Cumsum(collection: collections.Sequence) -> list:
+    return list(CumulativeReduce(None, collection))
 
 
 def Deltas(collection: collections.Sequence) -> list:
@@ -138,12 +157,32 @@ def Deltas(collection: collections.Sequence) -> list:
             (ord(b) - ord(a) if CharQ(a) and CharQ(b) else None) for a, b in zip(collection, collection[1:])]
 
 
+def Depth(obj: object) -> int:
+    if isinstance(obj, list) and obj:
+        return max(map(Depth, obj)) + 1
+    return 1 if obj == [] else 0
+
+
+def Differentiate(*objects) -> str:
+    return str(sympy.diff(Expression(objects[0]), *objects[1:]))
+
+
 def ElasticPotentialEnergy(spring_constant: float, deformation: float) -> float:
     return (spring_constant * (deformation ** 2)) / 2
 
 
-def Element(collection: collections.Sequence, index: int) -> object:
-    return collection[(index - 1) % len(collection)]
+def Elem(collection: collections.Sequence, index: Union[int, float, list]) -> Union[collections.Sequence, object]:
+    if isinstance(index, int):
+        return collection[index % len(collection)]
+    elif isinstance(index, float):
+        return [collection[Floor(index) % len(collection)], collection[Ceil(index) % len(collection)]]
+    if index != []:
+        return Elem(Elem(collection, index[0]), index[1:])
+    return collection
+
+
+def Equal(collection: collections.Sequence) -> bool:
+    return len(set(collection)) < 2
 
 
 def Evaluate(obj: str) -> object:
@@ -153,14 +192,6 @@ def Evaluate(obj: str) -> object:
         return eval(obj)
 
 
-def Extrema(collection: collections.Iterable) -> list:
-    return [Min(collection), Max(collection)]
-
-
-def ExtremaIndices(collection: collections.Sequence) -> list:
-    return [Indices(collection, Min(collection)), Indices(collection, Max(collection))]
-
-
 def Expression(equation: str) -> str:
     expression = equation
     for pair in ("÷", "/"), ("[", "("), ("]", ")"), ("{", "("), ("}", ")"):
@@ -168,7 +199,7 @@ def Expression(equation: str) -> str:
     if "=" in equation:
         parts = equation.split("=")
         expression = parts[0] + f"- ({parts[1]})"
-    non_var_names = " +-*/^!()"
+    non_var_names = " +-*/^!()."
     imp_mul_indices = []
     for index, char in enumerate(expression[:-1]):
         if char not in non_var_names and expression[index + 1] not in non_var_names:
@@ -179,30 +210,16 @@ def Expression(equation: str) -> str:
     return expression
 
 
-def FrictionForce(friction_coefficient: float, mass: float, angle: float = 0, grav_acc: float = g) -> float:
-    return friction_coefficient * mass * Cos(angle) * grav_acc
+def Extrema(collection: collections.Iterable) -> list:
+    return [Min(collection), Max(collection)]
 
 
-def FrictionCoefficient(friction_force: float, mass: float, angle: float = 0, grav_acc: float = g) -> float:
-    return friction_force / (mass * grav_acc * Cos(angle))
+def ExtremaIndices(collection: collections.Sequence) -> list:
+    return [Indices(collection, Min(collection)), Indices(collection, Max(collection))]
 
 
-def FullPrimeFac(integer: int) -> list:
-    if integer == int(integer):
-        return list(map(list, sympy.ntheory.factor_.factorint(int(integer)).objs()))
-    else:
-        raise TypeError("Unable to factorize the given argument")
-
-
-def Fst(collection: collections.Sequence) -> object:
-    return collection[0]
-
-
-def FromBase(digital_representation: list, base: int) -> int:
-    result = 0
-    for digit in digital_representation:
-        result = base * result + digit
-    return result
+def Filter(func: callable, collection: collections.Iterable, *, Negated: bool = False) -> list:
+    return list(filter((lambda elem: not func(elem) if Negated else func(elem)), collection))
 
 
 def Flatten(collection: list) -> list:
@@ -219,20 +236,54 @@ def Floor(number: float) -> int:
     return int(math.floor(number))
 
 
-def Filter(func: callable, collection: collections.Iterable, *, Negated: bool = False) -> list:
-    return list(filter((lambda elem: not func(elem) if Negated else func(elem)), collection))
+def FrictionCoefficient(friction_force: float, mass: float, angle: float = 0, grav_acc: float = g) -> float:
+    return friction_force / (mass * grav_acc * Cos(angle))
 
 
-def Group(collection: collections.Sequence) -> list:
-    return [Indices(collection, element) for element in Unique(collection)]
+def FrictionForce(friction_coefficient: float, mass: float, angle: float = 0, grav_acc: float = g) -> float:
+    return friction_coefficient * mass * Cos(angle) * grav_acc
+
+
+def FromBase(digital_representation: list, base: int) -> int:
+    result = 0
+    for digit in digital_representation:
+        result = base * result + digit
+    return result
+
+
+def Fst(collection: collections.Sequence) -> object:
+    return collection[0]
+
+
+def FullPrimeFac(integer: int) -> list:
+    if integer == int(integer):
+        return list(map(list, sympy.ntheory.factor_.factorint(int(integer)).objs()))
+    else:
+        raise TypeError("Unable to factorize the given argument")
 
 
 def Gamma(number: float) -> float:
     return math.gamma(number)
 
 
-def Integrate(*objects) -> str:
-    return str(sympy.integrate(*objects))
+def Grade(collection: collections.Sequence) -> list:
+    return sorted(range(len(collection)), key=lambda index: collection[index])
+
+
+def Group(collection: collections.Sequence) -> list:
+    return [Indices(collection, element) for element in Unique(collection)]
+
+
+def Id(obj: object) -> object:
+    return obj
+
+
+def Indices(collection: collections.Sequence, element: object) -> list:
+    indices = []
+    for index, elem in enumerate(collection):
+        if elem == element:
+            indices.append(index)
+    return indices
 
 
 def Input() -> object:
@@ -246,12 +297,8 @@ def Input() -> object:
             return inp
 
 
-def Indices(collection: collections.Sequence, element: object) -> list:
-    indices = []
-    for index, elem in enumerate(collection):
-        if elem == element:
-            indices.append(index + 1)
-    return indices
+def Integrate(*objects) -> str:
+    return str(sympy.integrate(Expression(objects[0]), *objects[1:]))
 
 
 def Intersection(a: collections.Sequence, b: collections.Sequence) -> collections.Sequence:
@@ -292,16 +339,16 @@ def Lst(collection: collections.Sequence) -> object:
     return collection[-1]
 
 
+def Map(func: callable, collection: collections.Iterable) -> list:
+    return list(map(func, collection))
+
+
 def Max(collection: collections.Iterable) -> object:
     return max(collection)
 
 
 def Min(collection: collections.Iterable) -> object:
     return min(collection)
-
-
-def Map(func: callable, collection: collections.Iterable) -> list:
-    return list(map(func, collection))
 
 
 def NormalComponent(force: float, angle: float) -> float:
@@ -317,19 +364,20 @@ def Optimize(equation: str, variable: Union[Symbol, str] = x) -> list:
     return [str(solution) for solution in Solve(derivative, variable)]
 
 
+def Permutations(collection: collections.Iterable) -> list:
+    perms = list(itertools.permutations(collection))
+    if isinstance(collection, str):
+        return list(map("".join, perms))
+    return list(map(list, perms))
+
+
 def PotentialEnergy(mass: float, height: float, grav_acc: float = g) -> float:
     return mass * height * grav_acc
 
 
-def PrimeQ(integer: int) -> bool:
-    if integer == int(integer):
-        return sympy.primetest.isprime(int(integer))
-    else:
-        raise TypeError("Unable to run a primality test on the given argument")
-
-
-def PrimePi(number: float) -> int:
-    return sympy.ntheory.generate.primepi(number)
+def Powerset(collection: collections.Iterable) -> list:
+    lst = list(collection)
+    return [list(z) for z in itertools.chain.from_iterable(itertools.combinations(lst, r + 1) for r in range(len(lst)))]
 
 
 def PrimeFac(integer: int) -> list:
@@ -342,26 +390,15 @@ def PrimeFac(integer: int) -> list:
         raise TypeError("Unable to factorize the given argument")
 
 
-def Permutations(collection: collections.Iterable) -> list:
-    perms = list(itertools.permutations(collection))
-    if isinstance(collection, str):
-        return list(map("".join, perms))
-    return list(map(list, perms))
+def PrimePi(number: float) -> int:
+    return sympy.ntheory.generate.primepi(number)
 
 
-def Calculate(equation: Union[list, str], replacement: list) -> Union[list, float]:
-    replacements = dict(replacement)
-    if isinstance(equation, str):
-        expression = Expression(equation)
-        for variable in replacements:
-            expression = expression.replace(variable, str(replacements.get(variable)))
-        return eval(expression)
-    results = []
-    for expression in map(Expression, equation):
-        for replacement in replacements:
-            expression = expression.replace(replacement, str(replacements.get(replacement)))
-        results.append(eval(expression))
-    return results
+def PrimeQ(integer: int) -> bool:
+    if integer == int(integer):
+        return sympy.primetest.isprime(int(integer))
+    else:
+        raise TypeError("Unable to run a primality test on the given argument")
 
 
 def Print(*objects, Sep: str = " ", End: str = "\n"):
@@ -372,15 +409,6 @@ def Print(*objects, Sep: str = " ", End: str = "\n"):
         else:
             result.append(element)
     print(*result, sep=Sep, end=End)
-
-
-def Powerset(collection: collections.Iterable) -> list:
-    lst = list(collection)
-    return [list(z) for z in itertools.chain.from_iterable(itertools.combinations(lst, r + 1) for r in range(len(lst)))]
-
-
-def Root(base: float, root: float = 2) -> float:
-    return base ** (1 / root)
 
 
 def Range(*arguments: float) -> Union[list, None]:
@@ -405,12 +433,32 @@ def Range(*arguments: float) -> Union[list, None]:
         raise TypeError("The arguments to 'Range' must all be integers.")
 
 
+def ReIm(number: complex) -> tuple:
+    return number.real, number.imag
+
+
+def Reduce(func: callable, collection: collections.Iterable) -> collections.Iterable:
+    return reduce(func, collection)
+
+
+def Reshape(collection: list, shape: collections.Iterable) -> object:
+    return [list(z) for z in reshape(collection, shape)]
+
+
+def Rev(collection: collections.Sequence) -> collections.Sequence:
+    return Reverse(collection)
+
+
+def Reverse(collection: collections.Sequence) -> collections.Sequence:
+    return collection[::-1]
+
+
+def Root(base: float, root: float = 2) -> float:
+    return base ** (1 / root)
+
+
 def Round(number: float, number_of_decimals: int = 0) -> float:
     return round(number, number_of_decimals)
-
-
-def RunLengthEncode(collection: collections.Iterable) -> collections.Iterable:
-    return [(len(list(b)), a) for a, b in itertools.groupby(collection)]
 
 
 def RunLengthDecode(encoded: list) -> collections.Iterable:
@@ -420,57 +468,32 @@ def RunLengthDecode(encoded: list) -> collections.Iterable:
     return result
 
 
-def Reshape(collection: list, shape: collections.Iterable) -> object:
-    import numpy
-    return [list(z) for z in numpy.reshape(collection, shape)]
-
-
-def Reverse(collection: collections.Sequence) -> collections.Sequence:
-    return collection[::-1]
-
-
-def ReIm(number: complex) -> tuple:
-    return number.real, number.imag
-
-
-def Reduce(func: callable, collection: collections.Iterable) -> collections.Iterable:
-    from functools import reduce
-    return reduce(func, collection)
+def RunLengthEncode(collection: collections.Iterable) -> collections.Iterable:
+    return [(len(list(b)), a) for a, b in itertools.groupby(collection)]
 
 
 def SchwarzschildRadius(mass: float) -> float:
     return (2 * mass * G) / (c ** 2)
 
 
-def SquareQ(number: float) -> bool:
-    if number == int(number):
-        return Root(number) == int(Root(number))
-    else:
-        return False
+def Sign(number: float) -> int:
+    return Compare(number, 0)
 
 
 def Slice(iterable: collections.Sequence, start: int = 0, end: int = 0, step: int = 1) -> collections.Sequence:
     return iterable[start:end or len(iterable):step]
 
 
-def Sum(obj: list) -> Union[list, float]:
-    if all(map(NumericQ, obj)):
-        return sum(obj)
-    return [sum(obj) if isinstance(obj, list) and all(map(NumericQ, obj)) else obj for obj in obj]
+def Solve(equation: str, variable: Union[Symbol, str] = x) -> list:
+    return [str(solution) for solution in solve(Expression(equation), variable)]
 
 
-def STDIN() -> list:
-    return sys.stdin.read().split("\n")
+def Sort(func: callable, collection: collections.Sequence, *, Descending: bool = False) -> collections.Sequence:
+    return sorted(collection, key=func, reverse=Descending)
 
 
-def String(obj: object) -> str:
-    return str(obj)
-
-
-def Str(obj: object) -> str:
-    if isinstance(obj, list):
-        return Parser.parse_list(obj)
-    return str(obj)
+def Sorted(collection: collections.Sequence, *, Descending: bool = False) -> collections.Sequence:
+    return sorted(collection, reverse=Descending)
 
 
 def Split(collection: collections.Sequence, element: object) -> list:
@@ -483,16 +506,50 @@ def Split(collection: collections.Sequence, element: object) -> list:
     return result
 
 
-def Solve(equation: str, variable: Union[Symbol, str] = x) -> list:
-    return [str(solution) for solution in solve(Expression(equation), variable)]
+def SquareQ(number: float) -> bool:
+    if number == int(number):
+        return Root(number) == int(Root(number))
+    else:
+        return False
 
 
-def Sort(func: callable, collection: collections.Sequence, *, Descending: bool = False) -> collections.Sequence:
-    return sorted(collection, key=func, reverse=Descending)
+def STDIN() -> list:
+    return sys.stdin.read().split("\n")
+
+
+def Str(obj: object) -> str:
+    if isinstance(obj, list):
+        return Parser.parse_list(obj)
+    return str(obj)
+
+
+def String(obj: object) -> str:
+    return str(obj)
+
+
+def Sublists(collection: collections.Sequence) -> list:
+    sub_lists = [[]]
+    for index1 in range(len(collection)):
+        index2 = index1 + 1
+        while index2 <= len(collection):
+            sub_lists.append(collection[index1:index2])
+            index2 += 1
+    return sorted(sub_lists, key=len)[1:]
+
+
+
+def Sum(obj: list) -> Union[list, float]:
+    if all(map(NumericQ, obj)):
+        return sum(obj)
+    return [sum(obj) if isinstance(obj, list) and all(map(NumericQ, obj)) else obj for obj in obj]
 
 
 def TangentialComponent(force: float, angle: float) -> float:
     return force * Sin(angle)
+
+
+def TruthIndices(obj: list) -> list:
+    return [index for index, value in enumerate(obj) if value]
 
 
 def Unique(collection: collections.Sequence) -> collections.Sequence:
@@ -501,6 +558,10 @@ def Unique(collection: collections.Sequence) -> collections.Sequence:
         if element not in result:
             result.append(element)
     return "".join(result) if isinstance(collection, str) else result
+
+
+def Untruth(collection: list) -> list:
+    return [int(index in collection) for index in range(max(collection + [-1]) + 1)]
 
 
 def Zip(obj: list, filler: object = None) -> list:
