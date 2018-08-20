@@ -1,3 +1,4 @@
+import Functions
 from functools import reduce
 from string import ascii_letters as letters
 
@@ -116,7 +117,11 @@ class Parser:
                     elif character in "¬!":
                         transpilation_result += " not "
                     elif character == "…":
-                        transpilation_result += "Range |apply| "
+                        implicit = ""
+                        prefix = program[index-2:index].rstrip()
+                        if not prefix or prefix[-1] in "([":
+                            implicit = "0"
+                        transpilation_result += implicit + " |int_range| "
                     elif program[index: index + 5] == "Until":
                         pause = 4
                         transpilation_result += "while not "
@@ -249,7 +254,6 @@ class Infix:
     def __init__(self, func):
         self.func = func
 
-    # noinspection PyShadowingNames
     def __ror__(self, other):
         return Infix(lambda x, self=self, other=other: self.func(other, x))
 
@@ -266,3 +270,4 @@ comp = Infix(lambda func1, func2: (lambda x: func1(func2(x))))
 filt = Infix(lambda func, item: list(filter(func, item)))
 red = Infix(lambda func, item: reduce(func, item))
 prod = Infix(lambda item1, item2: __import__('Functions').GenMul(item1, item2))
+int_range = Infix(lambda item1, item2: Functions.Range(item1, item2))
