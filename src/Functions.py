@@ -22,11 +22,11 @@ Set = set
 Dict = dict
 List = list
 Divmod = divmod
-Count = str.count
 Enumerate = enumerate
 Symbol = sympy.Symbol
 DegToRad = math.radians
 RadToDeg = math.degrees
+Count = lambda a, b: a.count(b)
 Sequence = collections.Sequence
 Conjugate = Conj = complex.conjugate
 
