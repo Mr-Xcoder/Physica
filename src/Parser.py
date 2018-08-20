@@ -116,7 +116,7 @@ class Parser:
                     elif character in "¬!":
                         transpilation_result += " not "
                     elif character == "…":
-                        transpilation_result += "Range "
+                        transpilation_result += "Range |apply| "
                     elif program[index: index + 5] == "Until":
                         pause = 4
                         transpilation_result += "while not "
