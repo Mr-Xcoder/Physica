@@ -1,5 +1,6 @@
 import Functions
 from functools import reduce
+from inspect import signature
 from string import ascii_letters as letters
 
 
@@ -105,6 +106,8 @@ class Parser:
                         transpilation_result += " None "
                     elif character == "÷":
                         transpilation_result += "//"
+                    elif character == "#":
+                        transpilation_result += " |bind| "
                     elif program[index:index + 2] == "//":
                         pause = 1
                         transpilation_result += "#"
@@ -118,11 +121,11 @@ class Parser:
                         transpilation_result += " not "
                     elif character == "…":
                         implicit = ""
-                        prefix = program[index-2:index].rstrip()
+                        prefix = program[index - 2:index].rstrip()
                         if not prefix or prefix[-1] in "([":
                             implicit = "0"
                         transpilation_result += implicit + " |int_range| "
-                    elif program[index: index + 5] == "Until":
+                    elif program[index:index + 5] == "Until" and validate(index - 1, index + 5):
                         pause = 4
                         transpilation_result += "while not "
                     elif character == "≠":
@@ -264,6 +267,15 @@ class Infix:
         return self.func(value1, value2)
 
 
+def bind_to_function(func: callable, item: object) -> object:
+    multiple_args = len(signature(func).parameters) > 1
+    function = (lambda *args: func(item, *args))
+    if multiple_args:
+        return function
+    else:
+        return function()
+
+
 apply = Infix(lambda func, item: func(item))
 each = Infix(lambda func, item: list(map(func, item)))
 comp = Infix(lambda func1, func2: (lambda x: func1(func2(x))))
@@ -271,3 +283,4 @@ filt = Infix(lambda func, item: list(filter(func, item)))
 red = Infix(lambda func, item: reduce(func, item))
 prod = Infix(lambda item1, item2: __import__('Functions').GenMul(item1, item2))
 int_range = Infix(lambda item1, item2: Functions.Range(item1, item2))
+bind = Infix(bind_to_function)
