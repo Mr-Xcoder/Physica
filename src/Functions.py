@@ -335,6 +335,10 @@ def Len(obj: object) -> int:
         raise TypeError("The given arguments do not match any overloads for 'Len'")
 
 
+def Limit(*objects) -> float:
+    return sympy.limit(Expression(objects[0]), *objects[1:])
+
+
 def Lst(collection: collections.Sequence) -> object:
     return collection[-1]
 

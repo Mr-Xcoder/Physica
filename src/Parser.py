@@ -117,6 +117,8 @@ class Parser:
                         transpilation_result += "]"
                     elif character == ":":
                         transpilation_result += ": "
+                    elif character == "∞":
+                        transpilation_result += " Infty "
                     elif character in "¬!":
                         transpilation_result += " not "
                     elif character == "…":
