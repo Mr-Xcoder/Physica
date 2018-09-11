@@ -152,6 +152,15 @@ def Cumsum(collection: collections.Sequence) -> list:
     return list(CumulativeReduce(None, collection))
 
 
+def Cycle(item: collections.Iterable, length: int) -> collections.Iterable:
+    item_copy = item
+    if len(item_copy) > length:
+        return item_copy[:length]
+    while len(item_copy) < length:
+        item_copy += item[:length - len(item_copy)]
+    return item_copy
+
+
 def Deltas(collection: collections.Sequence) -> list:
     return [b - a if NumericQ(a) and NumericQ(b) else
             (ord(b) - ord(a) if CharQ(a) and CharQ(b) else None) for a, b in zip(collection, collection[1:])]
@@ -264,6 +273,22 @@ def FullPrimeFac(integer: int) -> list:
 
 def Gamma(number: float) -> float:
     return math.gamma(number)
+
+
+def GenMul(item1: object, item2: object) -> object:
+    if NumericQ(item1) and NumericQ(item2):
+        return item1 * item2
+    elif NumericQ(item1) and isinstance(item2, list):
+        return [GenMul(item1, element) for element in item2]
+    elif NumericQ(item2) and isinstance(item1, list):
+        return [GenMul(item2, element) for element in item1]
+    elif isinstance(item1, list) and isinstance(item2, list) and all(map(NumericQ, item1 + item2)):
+        mat1 = min(item1, item2, key=len)
+        mat2 = item1 if mat1 == item2 else item2
+        return [x * y for x, y in zip(Cycle(mat1, len(mat2)), mat2)]
+    else:
+        item2_zip = list(zip(*item2))
+        return [[sum(a * b for a, b in zip(a_row, b_column)) for b_column in item2_zip] for a_row in item1]
 
 
 def Grade(collection: collections.Sequence) -> list:
@@ -443,6 +468,20 @@ def ReIm(number: complex) -> tuple:
 
 def Reduce(func: callable, collection: collections.Iterable) -> collections.Iterable:
     return reduce(func, collection)
+
+
+def Replace(string: collections.Iterable, text1: collections.Iterable,
+            text2: collections.Iterable) -> collections.Iterable:
+    if isinstance(string, str) and isinstance(text1, str) and isinstance(text2, str):
+        return string.replace(text1, text2)
+    elif isinstance(text1, list) and isinstance(text2, list) and len(text1) == len(text2):
+        string_copy = string
+        for a in zip(text1, text2):
+            string_copy = string_copy.replace(*a)
+        return string_copy
+    elif isinstance(string, list):
+        return [element if element != text1 else text2 for element in string]
+    return string
 
 
 def Reshape(collection: list, shape: collections.Iterable) -> object:
